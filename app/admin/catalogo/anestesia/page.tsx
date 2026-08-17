@@ -6,10 +6,12 @@ import UpdateAnesthesia from "@/components/catalogue/Anesthesia/UpdateAnesthesia
 import UpdateAnesthesiaStatus from "@/components/catalogue/Anesthesia/UpdateAnesthesiaStatus"
 import NavBarCatalogue from "@/components/catalogue/NavBarCatalogue"
 import axios from "axios"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import toast from "react-hot-toast"
 
 function page() {
+  const loaded = useRef(false)
+
   const [loading, setLoading] = useState(false)
   const [anesthesias, setAnesthesias] = useState<Anesthesia[]>([])
 
@@ -37,7 +39,9 @@ function page() {
   }
 
   useEffect(()=>{
-    fetchAnesthesias()
+    if(loaded.current===false)
+      fetchAnesthesias()
+    loaded.current=true
   },[])
 
   return (
