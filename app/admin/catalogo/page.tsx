@@ -1,30 +1,17 @@
 "use client"
 
-import axios from "axios"
-import { useEffect, useState } from "react"
-import toast from "react-hot-toast"
-import { Category, Product } from "../../generated/prisma/client"
-import NavBarCatalogue from "@/components/catalogue/NavBarCatalogue"
+import { useRouter } from "next/navigation"
+import { useEffect } from "react"
 
 function page() {
-    
-    
-
-    
-
-    
-
-    
+  const router = useRouter()
+  
+  useEffect(()=>{
+    router.push("/admin/catalogo/productos")
+  },[])
 
   return (
-    <div>
-        <NavBarCatalogue selected="Productos"/>
-        <div className="flex flex-col gap-5 p-5">
-            Catalogo Page
-           
-            
-        </div>
-    </div>
+    <div className="flex w-screen h-screen items-center justify-center">Cargando...</div>
   )
 }
 

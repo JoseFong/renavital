@@ -10,5 +10,6 @@ export type ProductWithCategory = {
     quantity: number,
     price: Decimal,
     active: Boolean,
-    category: Category
+    category: Category,
+    service: Boolean
 }

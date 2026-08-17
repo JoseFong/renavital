@@ -16,13 +16,14 @@ model Product {
   id Int @id @default(autoincrement())
   name String
   equipment Boolean
-  categoryId Int
+  categoryId Int?
   flux String
   quantity Int
   price Decimal @db.Decimal(10,2)
   active Boolean
+  service Boolean
 
-  category Category @relation(fields: [categoryId], references: [id])
+  category Category? @relation(fields: [categoryId], references: [id])
 }
 
 model Category {

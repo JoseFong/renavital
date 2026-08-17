@@ -1,14 +1,23 @@
 "use client"
 import NavBarCatalogue from "@/components/catalogue/NavBarCatalogue"
+import DeleteProductModal from "@/components/catalogue/Products/DeleteProductModal"
+import UpdateProductStatus from "@/components/catalogue/Products/UpdateProductStatus"
 import { ProductWithCategory } from "@/lib/types"
 import axios from "axios"
+import { useRouter } from "next/navigation"
 import { useEffect, useRef, useState } from "react"
 import toast from "react-hot-toast"
 
 function page() {
   const hasFetched = useRef(false)
 
+  const router = useRouter()
+
   const [products, setProducts] = useState<ProductWithCategory[]>([])
+
+  const [selectedProduct, setSelectedProduct] = useState<ProductWithCategory | null>(null)
+  const [isDeleteProductOpen, setIsDeleteProductOpen] = useState(false)
+  const [isUpdateProductStatusOpen,setIsUpdateProductStatusOpen] = useState(false)
 
   async function fetchProducts() {
     try {
@@ -30,11 +39,16 @@ function page() {
     hasFetched.current = true
   }, [])
 
+  function goToNew() {
+    router.push("/admin/catalogo/productos/nuevo")
+  }
+
   return (
     <div>
       <NavBarCatalogue selected="Productos" />
       <div className="p-5">
         <h1 className="font-bold">Productos</h1>
+        <button onClick={goToNew} className="underline cursor-pointer">Registrar nuevo</button>
         <table>
           <thead>
             <tr>
@@ -43,6 +57,7 @@ function page() {
               <th className="border-2 p-1">Flujo</th>
               <th className="border-2 p-1">Categoria</th>
               <th className="border-2 p-1">Equipo</th>
+              <th className="border-2 p-1">Producto/Servicio</th>
               <th className="border-2 p-1">Cantidad</th>
               <th className="border-2 p-1">Precio Unitario</th>
               <th className="border-2 p-1">Acciones</th>
@@ -55,20 +70,31 @@ function page() {
                 <td className="border-2 p-1">{p.id}</td>
                 <td className="border-2 p-1">{p.name}</td>
                 <td className="border-2 p-1">{p.flux}</td>
-                <td className="border-2 p-1">{p.category.name}</td>
+                <td className="border-2 p-1">{p.category ? p.category.name : "SIN CATEGORIA"}</td>
                 <td className="border-2 p-1">{p.equipment ? "Si" : "No"}</td>
+                <td className="border-2 p-1">{p.service ? "Servicio" : "Producto"}</td>
                 <td className="border-2 p-1">{p.quantity}</td>
                 <td className="border-2 p-1">${Number(p.price).toFixed(2)} USD</td>
                 <td className="border-2 p-1">
-                  <button>Editar</button>
-                  <button>Eliminar</button>
+                  <button className="underline cursor-pointer" onClick={() => router.push("/admin/catalogo/productos/editar/" + p.id)}>Editar</button>
+                  <button onClick={() => { setSelectedProduct(p); setIsDeleteProductOpen(true) }} className="underline cursor-pointer">Eliminar</button>
                 </td>
-                <td className="border-2 p-1">{p.active ? "Activo" : "No activo"}</td>
+                <td className="border-2 p-1">
+                  <button onClick={()=>{setSelectedProduct(p); setIsUpdateProductStatusOpen(true)}} className="underline cursor-pointer">
+                    {p.active ? "Activo" : "No activo"}
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+      {selectedProduct &&
+        <>
+          <UpdateProductStatus open={isUpdateProductStatusOpen} setOpen={setIsUpdateProductStatusOpen} product={selectedProduct} refresh={fetchProducts}/>
+          <DeleteProductModal open={isDeleteProductOpen} setOpen={setIsDeleteProductOpen} product={selectedProduct} reload={fetchProducts} />
+        </>
+      }
     </div>
   )
 }
