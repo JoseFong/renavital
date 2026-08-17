@@ -9,13 +9,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function DELETE(req:NextRequest,{params}:{params:Promise<{id:string}>}){
     try{
         const {id} = await params
-        
-        console.log(id)
-
         const idNum = Number(id)
-
-        console.log(idNum)
-
         await deleteCategory(idNum)
 
         return NextResponse.json({status:200})

@@ -6,11 +6,13 @@ import { exit } from "process";
  * @returns todos los productos
  */
 export async function getAllProducts() {    
-    return await prisma.product.findMany({
+    const products =  await prisma.product.findMany({
         include: {
             category: true
         }
     })
+    const sorted = products.sort((a,b)=>a.name.localeCompare(b.name))
+    return sorted
 }
 
 /**

@@ -5,7 +5,9 @@ import prisma from "@/lib/prisma";
  * @returns todas las anestesias registradas
  */
 export async function getAllAnesthesias(){
-    return await prisma.anesthesia.findMany()
+    const anesthesias = await prisma.anesthesia.findMany()
+    const sorted = anesthesias.sort((a,b)=>a.name.localeCompare(b.name))
+    return sorted
 }
 
 /**
