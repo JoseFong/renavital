@@ -65,6 +65,8 @@ function page() {
             if(Number(quantity)<0)
                 throw new Error("Ingrese una cantidad válida para el producto.")
 
+            if(equipment && !service) throw new Error("Un item marcado como 'Equipo' no puede ser considerado un producto.")
+
             const data = {
                 name: name.trim(),
                 flux: flux.trim(),
