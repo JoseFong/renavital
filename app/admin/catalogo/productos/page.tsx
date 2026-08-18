@@ -17,7 +17,11 @@ function page() {
 
   const [selectedProduct, setSelectedProduct] = useState<ProductWithCategory | null>(null)
   const [isDeleteProductOpen, setIsDeleteProductOpen] = useState(false)
-  const [isUpdateProductStatusOpen,setIsUpdateProductStatusOpen] = useState(false)
+  const [isUpdateProductStatusOpen, setIsUpdateProductStatusOpen] = useState(false)
+
+  const [search, setSearch] = useState("")
+
+  const [results, setResults] = useState<ProductWithCategory[]>([])
 
   async function fetchProducts() {
     try {
@@ -43,12 +47,37 @@ function page() {
     router.push("/admin/catalogo/productos/nuevo")
   }
 
+  useEffect(() => {
+    if (products)
+      setResults([...products])
+  }, [products])
+
+  useEffect(() => {
+    if (search.trim() === "") {
+        setResults([...products])
+        return
+    }
+
+    const searchTerm = search.toLowerCase().trim()
+
+    const aux = products.filter((a: ProductWithCategory) => {
+        return (
+            a.name.toLowerCase().includes(searchTerm) ||
+            a.category?.name.toLowerCase().includes(searchTerm)
+        )
+    })
+
+    setResults(aux)
+}, [search, products])
+
   return (
     <div>
       <NavBarCatalogue selected="Productos" />
-      <div className="p-5">
+      <div className="p-5 flex flex-col gap-1">
         <h1 className="font-bold">Productos</h1>
         <button onClick={goToNew} className="underline cursor-pointer">Registrar nuevo</button>
+        <input placeholder="Búsqueda" value={search} onChange={(e)=>setSearch(e.target.value.toUpperCase())}/>
+        <p>{results.length} resultados</p>
         <table>
           <thead>
             <tr>
@@ -65,7 +94,7 @@ function page() {
             </tr>
           </thead>
           <tbody>
-            {products.map((p: ProductWithCategory) => (
+            {results.map((p: ProductWithCategory) => (
               <tr key={p.id}>
                 <td className="border-2 p-1">{p.id}</td>
                 <td className="border-2 p-1">{p.name}</td>
@@ -80,7 +109,7 @@ function page() {
                   <button onClick={() => { setSelectedProduct(p); setIsDeleteProductOpen(true) }} className="underline cursor-pointer">Eliminar</button>
                 </td>
                 <td className="border-2 p-1">
-                  <button onClick={()=>{setSelectedProduct(p); setIsUpdateProductStatusOpen(true)}} className="underline cursor-pointer">
+                  <button onClick={() => { setSelectedProduct(p); setIsUpdateProductStatusOpen(true) }} className="underline cursor-pointer">
                     {p.active ? "Activo" : "No activo"}
                   </button>
                 </td>
@@ -91,7 +120,7 @@ function page() {
       </div>
       {selectedProduct &&
         <>
-          <UpdateProductStatus open={isUpdateProductStatusOpen} setOpen={setIsUpdateProductStatusOpen} product={selectedProduct} refresh={fetchProducts}/>
+          <UpdateProductStatus open={isUpdateProductStatusOpen} setOpen={setIsUpdateProductStatusOpen} product={selectedProduct} refresh={fetchProducts} />
           <DeleteProductModal open={isDeleteProductOpen} setOpen={setIsDeleteProductOpen} product={selectedProduct} reload={fetchProducts} />
         </>
       }

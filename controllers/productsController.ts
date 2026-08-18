@@ -11,7 +11,11 @@ export async function getAllProducts() {
             category: true
         }
     })
-    const sorted = products.sort((a,b)=>a.name.localeCompare(b.name))
+
+    const sorted = products.sort((a, b) =>
+        (a.category?.name ?? "").localeCompare(b.category?.name ?? "")
+    )
+
     return sorted
 }
 
@@ -182,5 +186,22 @@ export async function updateProduct(id: number, data: any) {
             quantity: data.quantity,
             service: data.service
         }
+    })
+}
+
+
+
+export async function createManyProducts(data:any){
+    await prisma.product.createMany({
+        data: data.map((d:any)=>({
+            name: d.name,
+            flux: d.flux,
+            quantity: d.quantity,
+            price: d.price,
+            equipment: d.equipment,
+            service: d.service,
+            categoryId: d.categoryId,
+            active: true
+        }))
     })
 }

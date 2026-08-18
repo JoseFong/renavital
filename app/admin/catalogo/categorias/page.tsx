@@ -6,11 +6,14 @@ import UpdateCategoryModal from "@/components/catalogue/Category/UpdateCategoryM
 import UpdateStatusCategory from "@/components/catalogue/Category/UpdateStatusCategory"
 import NavBarCatalogue from "@/components/catalogue/NavBarCatalogue"
 import axios from "axios"
+import { useRouter } from "next/navigation"
 import { useEffect, useRef, useState } from "react"
 import toast from "react-hot-toast"
 
 function page() {
   const hasFetched = useRef(false)
+
+  const router = useRouter()
 
   const [categories, setCategories] = useState<Category[]>([])
 
@@ -53,6 +56,7 @@ function page() {
               <th className="border-2 p-1">Nombre</th>
               <th className="border-2 p-1">Acciones</th>
               <th className="border-2 p-1">Estado</th>
+              <th className="border-2 p-1">Productos</th>
             </tr>
           </thead>
           <tbody>
@@ -66,6 +70,9 @@ function page() {
                 </td>
                 <td className="border-2 p-1">
                   <div onClick={()=>{setSelectedCategory(c); setIsUpdateStatusOpen(true)}} className={`${c.active ? "bg-green-600 hover:bg-green-700" : "bg-red-500 hover:bg-red-600"} transition-all cursor-pointer text-white text-center p-1 rounded-sm`}>{c.active ? "Activo" : "Inactivo"}</div>
+                </td>
+                <td className="border-2 p-1">
+                  <button onClick={()=>{router.push("/admin/catalogo/categorias/"+c.id+"/productos")}} className="underline cursor-pointer">Gestionar productos</button>
                 </td>
               </tr>
             ))}

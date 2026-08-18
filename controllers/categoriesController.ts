@@ -115,3 +115,12 @@ export async function updateCategory(id:number,data:any){
         }
     })
 }
+
+export async function createManyCategories(data:any){
+    await prisma.category.createMany({
+        data: data.map((d:string)=>({
+            name: d.trim().toUpperCase(),
+            active: true
+        }))
+    })
+}
