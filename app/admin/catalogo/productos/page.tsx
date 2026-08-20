@@ -2,7 +2,7 @@
 import NavBarCatalogue from "@/components/catalogue/NavBarCatalogue"
 import DeleteProductModal from "@/components/catalogue/Products/DeleteProductModal"
 import UpdateProductStatus from "@/components/catalogue/Products/UpdateProductStatus"
-import { ProductWithCategory } from "@/lib/types"
+import { ProductWithType } from "@/lib/types"
 import axios from "axios"
 import { useRouter } from "next/navigation"
 import { useEffect, useRef, useState } from "react"
@@ -13,15 +13,15 @@ function page() {
 
   const router = useRouter()
 
-  const [products, setProducts] = useState<ProductWithCategory[]>([])
+  const [products, setProducts] = useState<ProductWithType[]>([])
 
-  const [selectedProduct, setSelectedProduct] = useState<ProductWithCategory | null>(null)
+  const [selectedProduct, setSelectedProduct] = useState<ProductWithType | null>(null)
   const [isDeleteProductOpen, setIsDeleteProductOpen] = useState(false)
   const [isUpdateProductStatusOpen, setIsUpdateProductStatusOpen] = useState(false)
 
   const [search, setSearch] = useState("")
 
-  const [results, setResults] = useState<ProductWithCategory[]>([])
+  const [results, setResults] = useState<ProductWithType[]>([])
 
   async function fetchProducts() {
     try {
@@ -60,10 +60,10 @@ function page() {
 
     const searchTerm = search.toLowerCase().trim()
 
-    const aux = products.filter((a: ProductWithCategory) => {
+    const aux = products.filter((a: ProductWithType) => {
         return (
             a.name.toLowerCase().includes(searchTerm) ||
-            a.category?.name.toLowerCase().includes(searchTerm)
+            a.productType?.name.toLowerCase().includes(searchTerm)
         )
     })
 
@@ -82,27 +82,26 @@ function page() {
           <thead>
             <tr>
               <th className="border-2 p-1">Id</th>
+              <th className="border-2 p-1">Tipo</th>
               <th className="border-2 p-1">Nombre</th>
-              <th className="border-2 p-1">Flujo</th>
-              <th className="border-2 p-1">Categoria</th>
               <th className="border-2 p-1">Equipo</th>
               <th className="border-2 p-1">Producto/Servicio</th>
-              <th className="border-2 p-1">Cantidad</th>
               <th className="border-2 p-1">Precio Unitario</th>
               <th className="border-2 p-1">Acciones</th>
               <th className="border-2 p-1">Estado</th>
+              <th className="border-2 p-1">Conceptos</th>
             </tr>
           </thead>
           <tbody>
-            {results.map((p: ProductWithCategory) => (
+            {results.map((p: ProductWithType) => (
               <tr key={p.id}>
                 <td className="border-2 p-1">{p.id}</td>
+                <td className="border-2 p-1">
+                  {p.productType!==null ? p.productType.name : "SIN TIPO" }
+                </td>
                 <td className="border-2 p-1">{p.name}</td>
-                <td className="border-2 p-1">{p.flux}</td>
-                <td className="border-2 p-1">{p.category ? p.category.name : "SIN CATEGORIA"}</td>
                 <td className="border-2 p-1">{p.equipment ? "Si" : "No"}</td>
                 <td className="border-2 p-1">{p.service ? "Servicio" : "Producto"}</td>
-                <td className="border-2 p-1">{p.quantity}</td>
                 <td className="border-2 p-1">${Number(p.price).toFixed(2)} USD</td>
                 <td className="border-2 p-1">
                   <button className="underline cursor-pointer" onClick={() => router.push("/admin/catalogo/productos/editar/" + p.id)}>Editar</button>
@@ -112,6 +111,9 @@ function page() {
                   <button onClick={() => { setSelectedProduct(p); setIsUpdateProductStatusOpen(true) }} className="underline cursor-pointer">
                     {p.active ? "Activo" : "No activo"}
                   </button>
+                </td>
+                <td className="border-2 p-1">
+                  <button className="underline cursor-pointer">Gestionar conceptos</button>
                 </td>
               </tr>
             ))}

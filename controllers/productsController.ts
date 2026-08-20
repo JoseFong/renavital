@@ -8,12 +8,12 @@ import { exit } from "process";
 export async function getAllProducts() {
     const products = await prisma.product.findMany({
         include: {
-            category: true
+            productType: true
         }
     })
 
     const sorted = products.sort((a, b) =>
-        (a.category?.name ?? "").localeCompare(b.category?.name ?? "")
+        (a.productType?.name ?? "").localeCompare(b.productType?.name ?? "")
     )
 
     return sorted
@@ -73,17 +73,16 @@ export async function updateProductStatus(id: number) {
 export async function createProduct(data: any) {
     let exists
 
-    //validar que la categoria exista
-    if (data.categoryId !== -1) {
-        exists = await prisma.category.findFirst({
+    console.log(data)
+
+    //validar que el tipo de producto exist
+    if(data.productTypeId!==-1){
+        exists = await prisma.productType.findFirst({
             where: {
-                id: data.categoryId
+                id: data.productTypeId
             }
         })
-
-        if (!exists) throw new Error("La categoría no existe.")
-
-
+        if(!exists) throw new Error("No se encontró el tipo de producto.")
     }
 
     //validar que no exista otro producto con ese mismo nombre
@@ -92,24 +91,22 @@ export async function createProduct(data: any) {
             name: data.name
         }
     })
-
     if (exists) throw new Error("Ya existe otro producto con ese nombre.")
 
-    //asignar categoria si se selecciono ninguna
-    let newCategoryId = null
-    if (data.categoryId !== -1) newCategoryId = data.categoryId
+    //asignar nueva id de tipo de producto
+    let productTypeId = null
+    if(data.productTypeId!==-1)
+        productTypeId = data.productTypeId
 
     //crear producto
     await prisma.product.create({
         data: {
             name: data.name,
-            flux: data.flux,
             equipment: data.equipment,
             service: data.service,
-            quantity: data.quantity,
             price: data.price,
-            categoryId: newCategoryId,
-            active: true
+            active: true,
+            productTypeId: productTypeId
         }
     })
 }
@@ -137,31 +134,30 @@ export async function getProductFromId(id: number) {
  * @param data informacion nueva del producto
  */
 export async function updateProduct(id: number, data: any) {
+    let exists
+
     //validar que el producto exista
-    let exists = await prisma.product.findFirst({
+    exists = await prisma.product.findFirst({
         where: {
             id: id
         }
     })
-
     if (!exists) throw new Error("No se encontró el producto.")
 
-    //validar que la categoría exista
-    if (data.categoryId != -1) {
-        let existscat = await prisma.category.findFirst({
+    //validar que el tipo de producto exist
+    if(data.productTypeId!==-1){
+        exists = await prisma.productType.findFirst({
             where: {
-                id: data.categoryId
+                id: data.productTypeId
             }
         })
-
-        if (!existscat) throw new Error("No se encontró la categoría.")
+        if(!exists) throw new Error("No se encontró el tipo de producto.")
     }
-
-    //extraer la categoria
-    let newCategoryId = null
-    if (data.categoryId !== -1) {
-        newCategoryId = data.categoryId
-    }
+    
+    //asignar nueva id de tipo de producto
+    let productTypeId = null
+    if(data.productTypeId!==-1)
+        productTypeId = data.productTypeId
 
     //actualizar producto
     await prisma.product.update({
@@ -170,52 +166,10 @@ export async function updateProduct(id: number, data: any) {
         },
         data: {
             name: data.name,
-            categoryId: newCategoryId,
+            productTypeId: productTypeId,
             equipment: data.equipment,
-            flux: data.flux,
             price: data.price,
-            quantity: data.quantity,
             service: data.service
         }
     })
-}
-
-
-/**
- * Controlador para agregar multiples productos
- * @param data información de los multiples productos a registrar 
- */
-export async function createManyProducts(data: any) {
-    await prisma.product.createMany({
-        data: data.map((d: any) => ({
-            name: d.name,
-            flux: d.flux,
-            quantity: d.quantity,
-            price: d.price,
-            equipment: d.equipment,
-            service: d.service,
-            categoryId: d.categoryId,
-            active: true
-        }))
-    })
-}
-
-/**
- * 
- * @param id id de la categoría
- */
-export async function getProductsForCategory(id: number) {
-    const products =  await prisma.product.findMany({
-        where: {
-            OR: [
-                {
-                    categoryId: id
-                },
-                {
-                    categoryId: null
-                }
-            ]
-        }
-    })
-    return products
 }

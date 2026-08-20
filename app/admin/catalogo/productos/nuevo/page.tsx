@@ -5,7 +5,7 @@ import Image from "next/image"
 import question from "@/assets/icons8-help-50.png"
 import toast from "react-hot-toast"
 import axios from "axios"
-import { Category } from "@/app/generated/prisma/client"
+import { Category, ProductType } from "@/app/generated/prisma/client"
 import { useRouter } from "next/navigation"
 
 function page() {
@@ -14,16 +14,14 @@ function page() {
     const router = useRouter()
 
     const [name, setName] = useState("")
-    const [flux, setFlux] = useState("")
     const [equipment, setEquipment] = useState(false)
-    const [categoryId, setCategoryId] = useState("-1")
-    const [quantity, setQuantity] = useState("0")
+    const [productTypeId, setProductTypeId] = useState("-1")
     const [price, setPrice] = useState("0")
     const [service, setService] = useState(false)
 
-    const [categories, setCategories] = useState<Category[]>([])
+    const [productTypes, setProductTypes] = useState<ProductType[]>([])
 
-    const [loadingCategories, setLoadingCategories] = useState(true)
+    const [loadingProductTypes, setLoadingProductTypes] = useState(true)
     const [loading, setLoading] = useState(false)
 
     function modifyPrice(n: number) {
@@ -31,19 +29,14 @@ function page() {
         setPrice(aux.toString())
     }
 
-    function modifyQuantity(n: number) {
-        let aux = Number(quantity) + n
-        setQuantity(aux.toString())
-    }
-
-    async function fetchCategories() {
+    async function fetchProductTypes() {
         try {
-            setLoadingCategories(true)
-            const response = await axios.get("/api/categories")
-            setCategories(response.data)
-            setLoadingCategories(false)
+            setLoadingProductTypes(true)
+            const response = await axios.get("/api/productTypes")
+            setProductTypes(response.data)
+            setLoadingProductTypes(false)
         } catch (e: any) {
-            setLoadingCategories(false)
+            setLoadingProductTypes(false)
             if (e.response && e.response.data && e.response.data.message) {
                 toast.error(e.response.data.message)
             } else {
@@ -56,25 +49,20 @@ function page() {
         try {
             setLoading(true)
 
-            if (name.trim() === "" || flux.trim() === "" || price.trim() === "" || quantity.trim() === "")
+            if (name.trim() === "" || price.trim() === "")
                 throw new Error("Complete todos los campos.")
             
             if(Number(price)<=0)
                 throw new Error("Ingrese un precio válido para el producto.")
          
-            if(Number(quantity)<0)
-                throw new Error("Ingrese una cantidad válida para el producto.")
-
             if(equipment && !service) throw new Error("Un item marcado como 'Equipo' no puede ser considerado un producto.")
 
             const data = {
                 name: name.trim(),
-                flux: flux.trim(),
                 equipment: equipment,
                 service: service,
-                quantity: Number(quantity),
                 price: Number(price),
-                categoryId: Number(categoryId)
+                productTypeId: Number(productTypeId)
             }
 
             await axios.post("/api/products",data)
@@ -94,7 +82,7 @@ function page() {
 
     useEffect(() => {
         if(loaded.current) return
-        fetchCategories()
+        fetchProductTypes()
         loaded.current = true
     }, [])
 
@@ -109,8 +97,13 @@ function page() {
                 <h1 className="font-bold">Registrar nuevo producto</h1>
                 <label>Nombre</label>
                 <input placeholder="Ej. SERVICIO DE GESTION CLINICA INTEGRAL - NOM-004-SSA3" value={name} onChange={(e) => setName(e.target.value.toUpperCase())} />
-                <label>Flujo Detallado</label>
-                <input placeholder="000-ADMISIÓN" value={flux} onChange={(e) => setFlux(e.target.value.toUpperCase())} />
+                <label>Tipo de producto (opcional)</label>
+                <select disabled={loadingProductTypes} onChange={(e) => setProductTypeId(e.target.value)}>
+                    <option value={"-1"}>Seleccionar tipo de producto</option>
+                    {productTypes.map((p:ProductType) => (
+                        <option key={p.id} value={p.id}>{p.name}</option>
+                    ))}
+                </select>
                 <label>Precio unitario (USD)</label>
                 <div className="flex flex-row gap-1">
                     <button onClick={() => modifyPrice(1)} className="p-2 shadow-md rounded-sm cursor-pointer">+</button>
@@ -129,21 +122,6 @@ function page() {
                     <Image src={question} alt="Información" />
                     <p>Al marcar esta opción será considerado servicio y no producto.</p>
                 </div>
-                <label>Cantidad</label>
-                <div className="flex flex-row gap-1">
-                    <button onClick={() => modifyQuantity(1)} className="p-2 shadow-md rounded-sm cursor-pointer">+</button>
-                    <input type="number" value={quantity} onChange={(e) => setQuantity(e.target.value)} />
-                    <button onClick={() => modifyQuantity(-1)} className="p-2 shadow-md rounded-sm cursor-pointer">-</button>
-                    <Image src={question} alt="Información" />
-                    <p>Indica cuántas unidades de este producto se utilizan en el procedimiento normalmente, este número puede ser 0.</p>
-                </div>
-                <label>Categoría (opcional)</label>
-                <select disabled={loadingCategories} onChange={(e) => setCategoryId(e.target.value)}>
-                    <option value={"-1"}>Seleccionar categoría</option>
-                    {categories.map((c: Category) => (
-                        <option key={c.id} value={c.id}>{c.name}</option>
-                    ))}
-                </select>
                 <button onClick={fetchCreate} disabled={loading} className="underline cursor-pointer">Aceptar</button>
                 <button onClick={goBack} disabled={loading} className="underline cursor-pointer">Regresar</button>
             </div>

@@ -1,15 +1,13 @@
-import { Category } from "@/app/generated/prisma/client"
+import { ProductType } from "@/app/generated/prisma/client"
 import { Decimal } from "@prisma/client/runtime/client"
 
-export type ProductWithCategory = {
+export type ProductWithType = {
     id: number,
     name: string,
     equipment: boolean,
-    categoryId: number,
-    flux: string,
-    quantity: number,
+    productTypeId: number,
     price: Decimal,
-    active: Boolean,
-    category: Category,
-    service: Boolean
+    active: boolean,
+    service: boolean,
+    productType: ProductType
 }

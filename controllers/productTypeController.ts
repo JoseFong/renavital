@@ -109,3 +109,17 @@ export async function deleteProductType(id:number){
         }
     })
 }
+
+/**
+ * @DANGER
+ * Handler para crear muchos tipos de productos, usado para alimentar BD desde excel
+ * @param data arreglo de strings que contiene los nombres de los tipos de productos a agregar
+ */
+export async function createManyProductTypes(data:any){
+    await prisma.productType.createMany({
+        data: data.map((d:any)=>({
+            name: d,
+            active: true
+        }))
+    })
+}
