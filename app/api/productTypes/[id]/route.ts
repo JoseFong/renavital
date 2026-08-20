@@ -1,5 +1,24 @@
-import { deleteProductType, updateProductType, updateProductTypeStatus } from "@/controllers/productTypeController"
+import { deleteProductType, getProductTypeFromId, updateProductType, updateProductTypeStatus } from "@/controllers/productTypeController"
 import { NextRequest, NextResponse } from "next/server"
+
+/**
+ * Handler para consultar un tipo de producto
+ * @param param1 id del tipo de producto a consultar 
+ * @returns tipo de producto
+ */
+export async function GET(req:NextRequest,{params}:{params:Promise<{id:string}>}){
+    try{
+        const {id} = await params
+        const idNum = Number(id)
+
+        const productType = await getProductTypeFromId(idNum)
+
+        return NextResponse.json(productType)
+    }catch(e:any){
+        return NextResponse.json({message:e.message},{status:500})
+    }
+}
+
 
 /**
  * Handler para eliminar un tipo de producto

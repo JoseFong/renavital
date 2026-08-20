@@ -6,10 +6,13 @@ import DeleteProductType from "@/components/catalogue/ProductTypes/DeleteProduct
 import UpdateProductType from "@/components/catalogue/ProductTypes/UpdateProductType"
 import UpdateProductTypeStatus from "@/components/catalogue/ProductTypes/UpdateProductTypeStatus"
 import axios from "axios"
+import { useRouter } from "next/navigation"
 import { useEffect, useRef, useState } from "react"
 import toast, { useToaster } from "react-hot-toast"
 
 function page() {
+  const router = useRouter()
+
   const loaded = useRef(false)
 
   const [loading, setLoading] = useState(false)
@@ -70,7 +73,7 @@ function page() {
                     </button>
                   </td>
                   <td className="border-2 p-1">
-                    <button className="underline cursor-pointer">Gestionar productos</button>
+                    <button onClick={()=>router.push("/admin/catalogo/tipos_de_producto/"+p.id+"/productos")} className="underline cursor-pointer">Gestionar productos</button>
                   </td>
                   <td className="border-2 p-1">
                     <button onClick={()=>{setSelectedProductType(p); setIsUpdateProductTypeOpen(true)}} className="underline cursor-pointer">Editar</button>

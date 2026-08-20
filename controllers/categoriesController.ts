@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { IdQuantity} from "@/lib/types";
 
 /**
  * Funcion para obtener todas las categorias
@@ -131,3 +132,51 @@ export async function createManyCategories(data:any){
     })
 }
 
+export async function assignProductsToCategory(id:number,productsId:IdQuantity[]){
+    let exists = await prisma.category.findFirst({
+        where: {
+            id:id 
+        }
+    })
+    if(!exists) throw new Error("No se encontró el concepto.")
+
+    await prisma.productCategory.createMany({
+        data: productsId.map((p:IdQuantity)=>({
+            categoryId: id,
+            productId: p.id,
+            quantity: p.quantity
+        }))
+    })
+}
+
+export async function unassignProductsFromCategory(id:number,productsId:number[]){
+    let exists = await prisma.category.findFirst({
+        where: {
+            id:id 
+        }
+    })
+    if(!exists) throw new Error("No se encontró el concepto.")
+
+    await prisma.productCategory.deleteMany({
+        where: {
+            AND: [
+                {
+                    productId: {
+                        in: productsId
+                    }
+                },
+                {
+                    categoryId: id
+                }
+            ]
+        }
+    })
+}
+
+export async function getCategoryFromId(id:number){
+    return await prisma.category.findFirst({
+        where: {
+            id:id
+        }
+    })
+}

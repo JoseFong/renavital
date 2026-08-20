@@ -1,5 +1,18 @@
-import { changeCategoryStatus, deleteCategory, updateCategory } from "@/controllers/categoriesController";
+import { changeCategoryStatus, deleteCategory, getCategoryFromId, updateCategory } from "@/controllers/categoriesController";
 import { NextRequest, NextResponse } from "next/server";
+
+export async function GET(req:NextRequest,{params}:{params:Promise<{id:string}>}){
+    try{
+        const {id} = await params
+        const idNum = Number(id)
+
+        const category = await getCategoryFromId(idNum)
+
+        return NextResponse.json(category)
+    }catch(e:any){
+        return NextResponse.json({message:e.message},{status:500})
+    }
+}
 
 /**
  * Handler para eliminar una categoria

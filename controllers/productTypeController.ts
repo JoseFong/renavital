@@ -123,3 +123,86 @@ export async function createManyProductTypes(data:any){
         }))
     })
 }
+
+/**
+ * Controlador para consultar un tipo de producto con su id
+ * @param id id del tipo de producto a fconsultar
+ * @returns tipo de producto encontrado
+ */
+export async function getProductTypeFromId(id:number){
+    return await prisma.productType.findFirst({
+        where: {
+            id:id
+        }
+    })
+}
+
+/**
+ * Controlador para obtener los productos asignados a un tipo de producto o que no tengan un tipo de producto asignado
+ * @param id id del tipo de producto
+ * @returns productos que pertenezcan a este tipo O que no pertenezcan a ninguno
+ */
+export async function getProductsForProductType(id:number){
+    const products = await prisma.product.findMany({
+        where: {
+            OR: [
+                {
+                    productTypeId: id
+                },
+                {
+                    productType: null
+                }
+            ]
+        }
+    })
+    return products
+}
+
+/**
+ * Controlador para agregar varios productos a un tipo de producto
+ * @param id id del tipo de producto
+ * @param productIds arreglo de ids de los productos a modificar
+ */
+export async function assignProductTypeToProducts(id:number,productIds:number[]){
+    //validar que el tipo de producto exista
+    let exists = await prisma.productType.findFirst({
+        where: {
+            id: id
+        }
+    })
+    if(!exists) throw new Error("No existe ese tipo de producto.")
+
+
+    //cambiar la productTypeId de los productos
+    await prisma.product.updateMany({
+        where: {
+            id: {
+                in: productIds
+            }
+        },data:{
+            productTypeId: id
+        }
+    })
+}
+
+export async function unassignProductTypeToProducts(id:number,productIds:number[]){
+    //validar que el tipo de producto exista
+    let exists = await prisma.productType.findFirst({
+        where: {
+            id: id
+        }
+    })
+    if(!exists) throw new Error("No existe ese tipo de producto.")
+
+    //desasignar el tipo de producto al producto
+    await prisma.product.updateMany({
+        where:{
+            id: {
+                in: productIds
+            }
+        },
+        data: {
+            productTypeId: null
+        }
+    })
+}

@@ -173,3 +173,12 @@ export async function updateProduct(id: number, data: any) {
         }
     })
 }
+
+export async function getProductsWithCategory(){
+    const products = await prisma.product.findMany({
+        include: {
+            productCategories: true
+        }
+    })
+    return products
+}
