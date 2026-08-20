@@ -116,6 +116,12 @@ export async function updateCategory(id:number,data:any){
     })
 }
 
+/**
+ * @DANGER
+ * FUNCION EXPERMIENTAL 
+ * Controlador para crear muchas categorias
+ * @param data 
+ */
 export async function createManyCategories(data:any){
     await prisma.category.createMany({
         data: data.map((d:string)=>({
@@ -124,3 +130,4 @@ export async function createManyCategories(data:any){
         }))
     })
 }
+

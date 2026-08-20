@@ -5,8 +5,8 @@ import { exit } from "process";
  * 
  * @returns todos los productos
  */
-export async function getAllProducts() {    
-    const products =  await prisma.product.findMany({
+export async function getAllProducts() {
+    const products = await prisma.product.findMany({
         include: {
             category: true
         }
@@ -54,7 +54,7 @@ export async function updateProductStatus(id: number) {
     })
 
     if (!exists) throw new Error("No se encontró el producto.")
-        
+
     //cambiar estado
     await prisma.product.update({
         where: {
@@ -137,17 +137,8 @@ export async function getProductFromId(id: number) {
  * @param data informacion nueva del producto
  */
 export async function updateProduct(id: number, data: any) {
-    //validar que no exista otro producto con el mismo nombre
-    let exists = await prisma.product.findFirst({
-        where: {
-            name: data.name
-        }
-    })
-
-    if (exists && exists.id !== id) throw new Error("Ya existe un producto con ese nombre.")
-
     //validar que el producto exista
-    exists = await prisma.product.findFirst({
+    let exists = await prisma.product.findFirst({
         where: {
             id: id
         }
@@ -168,7 +159,7 @@ export async function updateProduct(id: number, data: any) {
 
     //extraer la categoria
     let newCategoryId = null
-    if(data.categoryId!==-1){
+    if (data.categoryId !== -1) {
         newCategoryId = data.categoryId
     }
 
@@ -190,10 +181,13 @@ export async function updateProduct(id: number, data: any) {
 }
 
 
-
-export async function createManyProducts(data:any){
+/**
+ * Controlador para agregar multiples productos
+ * @param data información de los multiples productos a registrar 
+ */
+export async function createManyProducts(data: any) {
     await prisma.product.createMany({
-        data: data.map((d:any)=>({
+        data: data.map((d: any) => ({
             name: d.name,
             flux: d.flux,
             quantity: d.quantity,
@@ -204,4 +198,24 @@ export async function createManyProducts(data:any){
             active: true
         }))
     })
+}
+
+/**
+ * 
+ * @param id id de la categoría
+ */
+export async function getProductsForCategory(id: number) {
+    const products =  await prisma.product.findMany({
+        where: {
+            OR: [
+                {
+                    categoryId: id
+                },
+                {
+                    categoryId: null
+                }
+            ]
+        }
+    })
+    return products
 }

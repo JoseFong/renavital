@@ -1,20 +1,21 @@
-import { Category } from "@/app/generated/prisma/client"
+"use client"
+import { ProductType } from "@/app/generated/prisma/client"
 import Modal from "@/components/public/Modal"
 import axios from "axios"
 import { useState } from "react"
 import toast from "react-hot-toast"
 
-function UpdateStatusCategory({ open, setOpen, category, reload }: { open: any, setOpen: any, category: Category, reload: () => void }) {
+function DeleteProductType({ open, setOpen, productType, reload }: { open: any, setOpen: any, productType:ProductType, reload: () => void }) {
     const [loading,setLoading] = useState(false)
-    
-    async function fetchUpdateStatus() {
+
+    async function fetchDelete() {
         try {
             setLoading(true)
-            await axios.put("/api/categories/"+category.id)
-            setOpen(false)
-            reload()
-            toast.success("Concepto actualizado exitosamente.")
+            await axios.delete("/api/productTypes/"+productType.id)
             setLoading(false)
+            setOpen(false)
+            toast.success("Tipo de producto eliminado exitosamente.")
+            reload()
         } catch (e: any) {
             setLoading(false)
             if (e.response && e.response.data && e.response.data.message) {
@@ -28,12 +29,13 @@ function UpdateStatusCategory({ open, setOpen, category, reload }: { open: any, 
     return (
         <Modal open={open} setOpen={setOpen}>
             <div className="flex flex-col gap-1">
-                <h1>¿Cambiar estado del concepto {category.name}?</h1>
-                <button onClick={fetchUpdateStatus} disabled={loading} className="underline cursor-pointer">Aceptar</button>
+                <h1 className="font-bold">¿Seguro que desea eliminar el tipo de producto '{productType.name}'?</h1>
+                <p>¡Esta acción es permanente! Recuerde que puede marcar este tipo de procedimiento como "Inactivo"</p>
+                <button disabled={loading} onClick={fetchDelete} className="underline cursor-pointer">Aceptar</button>
                 <button disabled={loading} onClick={() => setOpen(false)} className="underline cursor-pointer">Cancelar</button>
             </div>
         </Modal>
     )
 }
 
-export default UpdateStatusCategory
+export default DeleteProductType

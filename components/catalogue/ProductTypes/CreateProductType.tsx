@@ -1,31 +1,32 @@
+"use client"
 import Modal from "@/components/public/Modal"
 import axios from "axios"
 import { useState } from "react"
 import toast from "react-hot-toast"
 
-function CreateCategoryModal({ open, setOpen ,reload}: { open: any, setOpen: any,reload:()=>void }) {
+function CreateProductType({ open, setOpen, reload }: { open: any, setOpen: any, reload: any }) {
+    const [loading, setLoading] = useState(false)
     const [name, setName] = useState("")
-    const [loading,setLoading] = useState(false)
 
-    function reset() {
+    function reset(){
         setName("")
     }
 
-    async function fetchCreateProduct() {
+    async function fetchCreate() {
         try {
             setLoading(true)
             if(name.trim()==="") throw new Error("Complete todos los campos.")
-
-            const data = {
+                
+            const data = { 
                 name: name.trim()
             }
 
-            const response = await axios.post("/api/categories",data)
-            setLoading(false)
+            await axios.post("/api/productTypes",data)
+            toast.success("Tipo de producto creado exitosamente.")
+            reload()
             reset()
             setOpen(false)
-            reload()
-            toast.success("Concepto creado exitosamente.")
+            setLoading(false)
         } catch (e: any) {
             setLoading(false)
             if (e.response && e.response.data && e.response.data.message) {
@@ -39,20 +40,14 @@ function CreateCategoryModal({ open, setOpen ,reload}: { open: any, setOpen: any
     return (
         <Modal open={open} setOpen={setOpen}>
             <div className="flex flex-col gap-1">
-                <h1 className="font-bold">Registrar concepto</h1>
+                <h1 className="font-bold">Crear tipo de producto</h1>
                 <label>Nombre</label>
-                <input value={name} onChange={(e) => setName(e.target.value.toUpperCase())} placeholder="Ej. 1.0 BASE ALL" />
-                <button
-                    disabled={loading}
-                    className="underline cursor-pointer"
-                    onClick={fetchCreateProduct}
-                >
-                    Aceptar
-                </button>
+                <input value={name} onChange={(e) => setName(e.target.value.toUpperCase())} placeholder="Ej. LABORATORIOS" />
+                <button disabled={loading} onClick={fetchCreate} className="underline cursor-pointer">Aceptar</button>
                 <button disabled={loading} onClick={() => setOpen(false)} className="underline cursor-pointer">Cancelar</button>
             </div>
         </Modal>
     )
 }
 
-export default CreateCategoryModal
+export default CreateProductType

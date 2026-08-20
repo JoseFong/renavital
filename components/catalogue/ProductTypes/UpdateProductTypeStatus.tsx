@@ -1,19 +1,19 @@
-import { Category } from "@/app/generated/prisma/client"
+import { ProductType } from "@/app/generated/prisma/client"
 import Modal from "@/components/public/Modal"
 import axios from "axios"
 import { useState } from "react"
 import toast from "react-hot-toast"
 
-function UpdateStatusCategory({ open, setOpen, category, reload }: { open: any, setOpen: any, category: Category, reload: () => void }) {
+function UpdateProductTypeStatus({ open, setOpen, productType, reload }: { open: any, setOpen: any, productType:ProductType, reload: () => void }) {
     const [loading,setLoading] = useState(false)
     
     async function fetchUpdateStatus() {
         try {
             setLoading(true)
-            await axios.put("/api/categories/"+category.id)
+            await axios.put("/api/productTypes/"+productType.id)
             setOpen(false)
             reload()
-            toast.success("Concepto actualizado exitosamente.")
+            toast.success("Tipo de producto actualizado exitosamente.")
             setLoading(false)
         } catch (e: any) {
             setLoading(false)
@@ -28,7 +28,7 @@ function UpdateStatusCategory({ open, setOpen, category, reload }: { open: any, 
     return (
         <Modal open={open} setOpen={setOpen}>
             <div className="flex flex-col gap-1">
-                <h1>¿Cambiar estado del concepto {category.name}?</h1>
+                <h1>¿Cambiar estado del tipo de producto `{productType.name}`?</h1>
                 <button onClick={fetchUpdateStatus} disabled={loading} className="underline cursor-pointer">Aceptar</button>
                 <button disabled={loading} onClick={() => setOpen(false)} className="underline cursor-pointer">Cancelar</button>
             </div>
@@ -36,4 +36,4 @@ function UpdateStatusCategory({ open, setOpen, category, reload }: { open: any, 
     )
 }
 
-export default UpdateStatusCategory
+export default UpdateProductTypeStatus

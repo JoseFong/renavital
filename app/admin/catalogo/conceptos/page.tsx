@@ -45,9 +45,10 @@ function page() {
 
   return (
     <div>
-      <NavBarCatalogue selected="Categorias" />
+      <NavBarCatalogue selected="Conceptos" />
       <div className="p-5">
-        <p className="font-bold">Categorias</p>
+        <p className="font-bold">Conceptos de productos</p>
+        {categories.length} resultados
         <button className="underline cursor-pointer" onClick={() => setIsCreateModalOpen(true)}>Registrar</button>
         <table>
           <thead>
@@ -72,7 +73,7 @@ function page() {
                   <div onClick={()=>{setSelectedCategory(c); setIsUpdateStatusOpen(true)}} className={`${c.active ? "bg-green-600 hover:bg-green-700" : "bg-red-500 hover:bg-red-600"} transition-all cursor-pointer text-white text-center p-1 rounded-sm`}>{c.active ? "Activo" : "Inactivo"}</div>
                 </td>
                 <td className="border-2 p-1">
-                  <button onClick={()=>{router.push("/admin/catalogo/categorias/"+c.id+"/productos")}} className="underline cursor-pointer">Gestionar productos</button>
+                  <button onClick={()=>{router.push("/admin/catalogo/conceptos/"+c.id+"/productos")}} className="underline cursor-pointer">Gestionar productos</button>
                 </td>
               </tr>
             ))}

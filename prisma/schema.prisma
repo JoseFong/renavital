@@ -16,14 +16,21 @@ model Product {
   id Int @id @default(autoincrement())
   name String
   equipment Boolean
-  categoryId Int?
-  flux String
-  quantity Int
   price Decimal @db.Decimal(10,2)
   active Boolean
   service Boolean
+  productTypeId Int?
 
-  category Category? @relation(fields: [categoryId], references: [id])
+  productType ProductType? @relation(fields: [productTypeId],references: [id])
+  productCategories ProductCategory[]
+}
+
+model ProductType {
+  id Int @id @default(autoincrement())
+  name String @unique
+  active Boolean
+
+  products Product[]
 }
 
 model Category {
@@ -31,8 +38,20 @@ model Category {
   name String @unique
   active Boolean
 
-  products Product[]
+  productCategories ProductCategory[]
   configurationCategories ConfigurationCategories[]
+}
+
+model ProductCategory{
+  id Int @id @default(autoincrement())
+  productId Int
+  categoryId Int
+  quantity Int
+
+  product Product @relation(fields: [productId],references: [id])
+  category Category @relation(fields: [categoryId],references: [id])
+
+  @@unique([productId,categoryId])
 }
 
 model Procedure {

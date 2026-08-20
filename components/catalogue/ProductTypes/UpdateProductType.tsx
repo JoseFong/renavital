@@ -1,35 +1,38 @@
-import { Category } from "@/app/generated/prisma/client"
+"use client"
+import {  ProductType } from "@/app/generated/prisma/client"
 import Modal from "@/components/public/Modal"
 import axios from "axios"
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 
-function UpdateCategoryModal({ open, setOpen ,reload,category}: { open: any, setOpen: any,reload:()=>void ,category:Category}) {
+function UpdateProductType({ open, setOpen,productType, reload }: { open: any, setOpen: any,productType:ProductType, reload: any }) {
+    const [loading, setLoading] = useState(false)
     const [name, setName] = useState("")
-    const [loading,setLoading] = useState(false)
 
-    function reset() {
-        setName(category.name)
+    function reset(){
+        if(productType)
+            setName(productType.name)
     }
 
     useEffect(()=>{
-        reset()
-    },[])
+        if(productType)
+            reset()
+    },[open])
 
     async function fetchUpdate() {
         try {
             setLoading(true)
             if(name.trim()==="") throw new Error("Complete todos los campos.")
-
-            const data = {
+                
+            const data = { 
                 name: name.trim()
             }
 
-            const response = await axios.patch("/api/categories/"+category.id,data)
-            setLoading(false)
-            setOpen(false)
+            await axios.patch("/api/productTypes/"+productType.id,data)
+            toast.success("Tipo de producto actualizado exitosamente.")
             reload()
-            toast.success("Concepto actualizado exitosamente.")
+            setOpen(false)
+            setLoading(false)
         } catch (e: any) {
             setLoading(false)
             if (e.response && e.response.data && e.response.data.message) {
@@ -43,20 +46,14 @@ function UpdateCategoryModal({ open, setOpen ,reload,category}: { open: any, set
     return (
         <Modal open={open} setOpen={setOpen}>
             <div className="flex flex-col gap-1">
-                <h1 className="font-bold">Editar concepto</h1>
+                <h1 className="font-bold">Actualizar tipo de producto</h1>
                 <label>Nombre</label>
-                <input value={name} onChange={(e) => setName(e.target.value.toUpperCase())} placeholder="Ej. 1.0 BASE ALL" />
-                <button
-                    disabled={loading}
-                    className="underline cursor-pointer"
-                    onClick={fetchUpdate}
-                >
-                    Aceptar
-                </button>
+                <input value={name} onChange={(e) => setName(e.target.value.toUpperCase())} placeholder="Ej. LABORATORIOS" />
+                <button disabled={loading} onClick={fetchUpdate} className="underline cursor-pointer">Aceptar</button>
                 <button disabled={loading} onClick={() => setOpen(false)} className="underline cursor-pointer">Cancelar</button>
             </div>
         </Modal>
     )
 }
 
-export default UpdateCategoryModal
+export default UpdateProductType
