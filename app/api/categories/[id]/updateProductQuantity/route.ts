@@ -1,5 +1,4 @@
-import { assignProductsToCategory, changeCategoryStatus } from "@/controllers/categoriesController"
-import { IdQuantity } from "@/lib/types"
+import { updateProductQuantity } from "@/controllers/categoriesController"
 import { NextRequest, NextResponse } from "next/server"
 
 export async function POST(req:NextRequest,{params}:{params:Promise<{id:string}>}){
@@ -8,12 +7,13 @@ export async function POST(req:NextRequest,{params}:{params:Promise<{id:string}>
         const idNum = Number(id)
 
         const data = await req.json()
-        const productIds = data.productIds
+        const idQuantities = data.idQuantities
 
-        await assignProductsToCategory(idNum,productIds)
+        await updateProductQuantity(idNum,idQuantities)
 
         return NextResponse.json({status:200})
     }catch(e:any){
+        console.log(e.message)
         return NextResponse.json({message:e.message},{status:500})
     }
 }

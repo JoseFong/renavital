@@ -8,12 +8,13 @@ export async function POST(req:NextRequest,{params}:{params:Promise<{id:string}>
         const idNum = Number(id)
 
         const data = await req.json()
-        const productsIds:number[] = data
+        const productIds:number[] = data.productIds
 
-        await unassignProductsFromCategory(idNum,productsIds)
+        await unassignProductsFromCategory(idNum,productIds)
 
         return NextResponse.json({status:200})
     }catch(e:any){
+        console.log(e.message)
         return NextResponse.json({message:e.message},{status:500})
     }
 }
