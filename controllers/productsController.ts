@@ -182,3 +182,28 @@ export async function getProductsWithCategory(){
     })
     return products
 }
+
+
+export async function deleteManyProducts(ids:number[]){
+    await prisma.product.deleteMany({
+        where: {
+            id: {
+                in: ids
+            }
+        }
+    })
+}
+
+
+export async function createManyProducts(data:any){
+    await prisma.product.createMany({
+        data: data.map((d:any)=>({
+            productTypeId: d.productTypeId,
+            name: d.name,
+            equipment: d.equipment,
+            service: d.service,
+            price: d.price,
+            active: true
+        }))
+    })
+}

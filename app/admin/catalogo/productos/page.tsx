@@ -1,5 +1,6 @@
 "use client"
 import NavBarCatalogue from "@/components/catalogue/NavBarCatalogue"
+import DeleteManyModal from "@/components/catalogue/Products/DeleteManyModal"
 import DeleteProductModal from "@/components/catalogue/Products/DeleteProductModal"
 import UpdateProductStatus from "@/components/catalogue/Products/UpdateProductStatus"
 import { ProductWithType } from "@/lib/types"
@@ -18,10 +19,36 @@ function page() {
   const [selectedProduct, setSelectedProduct] = useState<ProductWithType | null>(null)
   const [isDeleteProductOpen, setIsDeleteProductOpen] = useState(false)
   const [isUpdateProductStatusOpen, setIsUpdateProductStatusOpen] = useState(false)
+  const [isDeleteManyOpen,setIsDeleteManyOpen] = useState(false)
 
   const [search, setSearch] = useState("")
 
   const [results, setResults] = useState<ProductWithType[]>([])
+
+  const [selectedIds, setSelectedIds] = useState<number[]>([])
+
+  function toggleSelection(id: number) {
+    let aux = [...selectedIds]
+
+    if (aux.includes(id)) {
+      aux = aux.filter((a: number) => a !== id)
+    } else {
+      aux.push(id)
+    }
+
+    setSelectedIds(aux)
+  }
+
+  function selectAll() {
+    if (selectedIds.length !== results.length) {
+      const aux = results.map((r: ProductWithType) => {
+        return r.id
+      })
+      setSelectedIds(aux)
+    } else {
+      setSelectedIds([])
+    }
+  }
 
   async function fetchProducts() {
     try {
@@ -54,21 +81,23 @@ function page() {
 
   useEffect(() => {
     if (search.trim() === "") {
-        setResults([...products])
-        return
+      setResults([...products])
+      return
     }
 
     const searchTerm = search.toLowerCase().trim()
 
     const aux = products.filter((a: ProductWithType) => {
-        return (
-            a.name.toLowerCase().includes(searchTerm) ||
-            a.productType?.name.toLowerCase().includes(searchTerm)
-        )
+      return (
+        a.name.toLowerCase().includes(searchTerm) ||
+        a.productType?.name.toLowerCase().includes(searchTerm)
+      )
     })
 
     setResults(aux)
-}, [search, products])
+  }, [search, products])
+
+  
 
   return (
     <div>
@@ -76,11 +105,15 @@ function page() {
       <div className="p-5 flex flex-col gap-1">
         <h1 className="font-bold">Productos</h1>
         <button onClick={goToNew} className="underline cursor-pointer">Registrar nuevo</button>
-        <input placeholder="Búsqueda" value={search} onChange={(e)=>setSearch(e.target.value.toUpperCase())}/>
+        <input placeholder="Búsqueda" value={search} onChange={(e) => setSearch(e.target.value.toUpperCase())} />
         <p>{results.length} resultados</p>
+        <button onClick={()=>setIsDeleteManyOpen(true)} disabled={selectedIds.length === 0} className="disabled:opacity-60 underline cursor-pointer">Eliminar seleccionados</button>
         <table>
           <thead>
             <tr>
+              <th className="border-2 p-1">
+                <input type="checkbox" checked={selectedIds.length === results.length} onChange={selectAll} />
+              </th>
               <th className="border-2 p-1">Id</th>
               <th className="border-2 p-1">Tipo</th>
               <th className="border-2 p-1">Nombre</th>
@@ -89,15 +122,17 @@ function page() {
               <th className="border-2 p-1">Precio Unitario</th>
               <th className="border-2 p-1">Acciones</th>
               <th className="border-2 p-1">Estado</th>
-              <th className="border-2 p-1">Conceptos</th>
             </tr>
           </thead>
           <tbody>
             {results.map((p: ProductWithType) => (
               <tr key={p.id}>
+                <td className="border-2 p-1">
+                  <input type="checkbox" checked={selectedIds.includes(p.id)} onChange={() => toggleSelection(p.id)} />
+                </td>
                 <td className="border-2 p-1">{p.id}</td>
                 <td className="border-2 p-1">
-                  {p.productType!==null ? p.productType.name : "SIN TIPO" }
+                  {p.productType !== null ? p.productType.name : "SIN TIPO"}
                 </td>
                 <td className="border-2 p-1">{p.name}</td>
                 <td className="border-2 p-1">{p.equipment ? "Si" : "No"}</td>
@@ -112,9 +147,6 @@ function page() {
                     {p.active ? "Activo" : "No activo"}
                   </button>
                 </td>
-                <td className="border-2 p-1">
-                  <button className="underline cursor-pointer">Gestionar conceptos</button>
-                </td>
               </tr>
             ))}
           </tbody>
@@ -125,6 +157,9 @@ function page() {
           <UpdateProductStatus open={isUpdateProductStatusOpen} setOpen={setIsUpdateProductStatusOpen} product={selectedProduct} refresh={fetchProducts} />
           <DeleteProductModal open={isDeleteProductOpen} setOpen={setIsDeleteProductOpen} product={selectedProduct} reload={fetchProducts} />
         </>
+      }
+      {selectedIds.length>0 &&
+        <DeleteManyModal open={isDeleteManyOpen} setOpen={setIsDeleteManyOpen} selectedIds={selectedIds} reload={fetchProducts}/>
       }
     </div>
   )

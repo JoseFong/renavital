@@ -1,4 +1,4 @@
-import { createProduct, getAllProducts } from "@/controllers/productsController";
+import { createProduct, deleteManyProducts, getAllProducts } from "@/controllers/productsController";
 import { NextRequest, NextResponse } from "next/server";
 
 /**
@@ -29,3 +29,4 @@ export async function POST(req:NextRequest){
         return NextResponse.json({message:e.message},{status:500})
     }
 }
+
