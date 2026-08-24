@@ -175,15 +175,15 @@ export async function getCategoryFromId(id: number) {
     })
 }
 
-export async function updateProductQuantity(id:number,idQuantities:IdQuantity[]){
+export async function updateProductQuantity(id: number, idQuantities: IdQuantity[]) {
     let exists = await prisma.category.findFirst({
         where: {
-            id:id
+            id: id
         }
     })
-    if(!exists) throw new Error("No se encontró la categoría.")
+    if (!exists) throw new Error("No se encontró la categoría.")
 
-    for (const idQuantity of idQuantities){
+    for (const idQuantity of idQuantities) {
         await prisma.productCategory.update({
             where: {
                 productId_categoryId: {

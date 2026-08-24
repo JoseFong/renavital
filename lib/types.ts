@@ -1,4 +1,4 @@
-import { ProductCategory, ProductType } from "@/app/generated/prisma/client"
+import { Anesthesia, Procedure, ProductCategory, ProductType, Stay } from "@/app/generated/prisma/client"
 import { Decimal } from "@prisma/client/runtime/client"
 
 export type ProductWithType = {
@@ -26,4 +26,16 @@ export type ProductWithCategories = {
     name: string,
     price: Decimal,
     productCategories: ProductCategory[]
+}
+
+export type ConfigurationInfo = {
+    id:number,
+    code:string,
+    procedureId:number,
+    anesthesiaId:number,
+    stayId:number,
+    active: boolean,
+    procedure: Procedure,
+    anesthesia: Anesthesia,
+    stay: Stay
 }
