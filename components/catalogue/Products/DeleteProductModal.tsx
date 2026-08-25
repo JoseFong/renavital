@@ -1,11 +1,10 @@
 "use client"
 import Modal from "@/components/public/Modal"
-import { ProductWithCategory } from "@/lib/types"
 import axios from "axios"
 import { useState } from "react"
 import toast from "react-hot-toast"
 
-function DeleteProductModal({ open, setOpen, product, reload }: { open: any, setOpen: any, product: ProductWithCategory, reload: () => void }) {
+function DeleteProductModal({ open, setOpen, product, reload }: { open: any, setOpen: any, product: any, reload: () => void }) {
     const [loading,setLoading] = useState(false)
 
     async function fetchDelete() {

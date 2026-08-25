@@ -1,11 +1,10 @@
 "use client"
 import Modal from "@/components/public/Modal"
-import { ProductWithCategory } from "@/lib/types"
 import axios from "axios"
 import { useState } from "react"
 import toast from "react-hot-toast"
 
-function UpdateProductStatus({ open, setOpen, product, refresh }: { open: any, setOpen: any, product: ProductWithCategory, refresh: () => void }) {
+function UpdateProductStatus({ open, setOpen, product, refresh }: { open: any, setOpen: any, product: any, refresh: () => void }) {
     const [loading, setLoading] = useState(false)
 
     async function fetchUpdate() {

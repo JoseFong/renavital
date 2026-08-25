@@ -39,3 +39,15 @@ export type ConfigurationInfo = {
     anesthesia: Anesthesia,
     stay: Stay
 }
+
+export type ProductWithTypeAndCategories = {
+    id: number,
+    name: string,
+    equipment: boolean,
+    productTypeId: number,
+    price: Decimal,
+    active: boolean,
+    service: boolean,
+    productType: ProductType,
+    productCategories: ProductCategory[]
+}

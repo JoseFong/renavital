@@ -1,0 +1,84 @@
+1. Si se selecciona el producto TERAPIA DE INFUSION - EQUIPO - BOMBA DE INFUSION - VOLUMETRICA, se necesita seleccionar a fuerzas el producto ADMINISTRACION INTRAVENOSA - SET DE INFUSION - LINEA DE PERFUSION - PARA BOMBA DE PERFUSION
+
+2. Si se selecciona el producto TERAPIA DE INFUSION - EQUIPO - BOMBA DE PERFUSION - JERINGA se necesita seleccionar a fuerzas ADMINISTRACION INTRAVENOSA - SET DE INFUSION - JERINGA DE PERFUSION - PARA BOMBA DE PERFUSION
+
+3. Si se selecciona SERVICIOS - HOSPITALARIOS - MONITOREO - MONITOR DE SIGNOS VITALES 6 PARAMETROS - USO se necesitan seleccionar SUMINISTROS QUIRURGICOS - ELECTRODO - DESECHABLE - PARCHE AUTOADHERIBLE en cantidad 5, en la relación productcategory ese producto tiene quantity 5 por default
+
+4. SERVICIOS - HOSPITALARIOS - MONITOREO - MONITOR DE SIGNOS VITALES 6 PARAMETROS - USO también necesita los 5 parches anteriores
+
+5. SERVICIOS - HOSPITALARIOS - TORRE DE LAPAROSCOPIA - PROCEDIMIENTO QX - USO necesita necesita a fuerzas SUMINISTROS QUIRURGICOS - LAPAROSCOPIA - FUNDA DE CAMARA - DESECHABLE
+
+6. Okay, aquí va una jodida, en toda la categoría 5.0 ANESTESIA (PKG ANESTESICOS) hay varias cosas, hay muchos tipos de ámpulas para la anestesia, y se le pide al medico elegir MINIMO 1 obligatoriamente, PERO HAY PAQUETES, o sea, hay un paquete de 3 ámpulas en 80dlls y un paquete de 5 ámpulas en 112 dlls, la idea de eso es que por ejemplo, si un medico elige 3 ámpulas y la suma del precio unitario supera los 80dlls, se le cobraran 80dlls, si la suma es menor a 80dlls, se le cobrará ese precio, ej. 50 dlls, mismo caso con las 5 ámpulas pero usando el precio del paquete de 5 ámpulas, por ejemplo si elige 4 ámpulas se usara como referencia el precio del paquete de 5, si se pasa de 5 ya nos olvidaríamos de los paquetes, en el Excel que tengo esta cada tipo de ámpula cargada como un producto diferente pero con una cantidad de 0 en el productCategory, pero también esta cargado como producto el paquete de 5 y el paquete de 3
+
+7. en la categoría 5.1 BLOQUEO, hay muchos tipos de aguja y todas con cantidad 0, pero hay una aguja de ellas que esta marcada con cantidad 1, la idea es que se le exija MINIMO 1 aguja obligatoria, puede elegir mas, y esa que esta marcada como 1 será la default
+
+8. el producto CUIDADO DE HERIDAS - GASAS - SIMPLE - ESTERIL - 10CMX10CM - C/5 GASAS (PARA BLOQUEO) siempre se usara cuando usemos anestesia por bloqueo
+
+9. en la categoría 5.1 BLOQUEO hay varios tipos de jeringas, es el mismo caso con las agujas, hay una marcada como default pero pide mínimo 1 obligatoria, puede ser cualquiera con que sea una
+
+10. en la categoría 5.3 anestesia general, hay varios tipos de canulas, hay una marcada con 1 en cantidad como default, se pide mínimo una obligatoriamente
+
+11. si esta marcada una configuración que use la categoría 5.3 es obligatorio usar PRODUCTOS RESPIRATORIOS - CIRCUITO DE ANESTESIA - ADULTO - DESECHABLE
+
+12. en la categoría 5.3 hay varios tipos de tubos endotraqueales, debe de haber mínimo 1 marcado, mismo caso que jeringas y agujas que ya mencione
+
+13. cuando se use un tubo endotraqueal es a fuerzas cargar mínimo 1 producto de PRODUCTOS RESPIRATORIOS - GUÍA PARA TUBO ENDOTRAQUEAL ADULTO
+
+
+14. en la categoría 6.0 pre-operatorio hay varios productos marcados con que debe de haber mínimo 1 a fuerzas en caso de seleccionar una configuración que use esa categoría
+
+15. en la categoría 6.1 hay 3 tipos de agua esteril y se tiene que seleccionar mínimo 1
+
+16. mismo caso anterior con 2 tipos de bolsas RPBI
+
+17. si se selecciona una configuración que use la categoría 6.1 es obligatorio seleccionar SUMINISTROS QUIRURGICOS - BULTO - CIRUGÍA MAYOR - DESECHABLE aunque ya esta marcada como default 1
+
+18. en la categoría 6.1 hay varios productos marcados como que mínimo deberían de tener 1 agregado, nada nuevo
+
+19. ahí va otra ojete, en la categoría 6.1 hay muchísimos productos marcados como "Instrumental quirurgico" pero cada uno diferente, por ejemplo hay uno que dice plástica - mayor, plástica - menor, otra que dice por ejemplo ortopedia mayor y otra ortopedia menor, la idea es que dependiendo del tipo de procedimiento se seleccionara automáticamente el paquete y el tipo (mayor/menor) dependiendo si el procedimiento es mayor o menor, sabes como? pero por ahora a lo que me dijo german solo marcan el de GENERAL - MAYOR o GENERAL - MENOR dependiendo si el procedimeinto es mayor o menor
+
+20. en la categoría 6.1 se pide mínimo 1 de GUANTES - EXPLORACION - DESECHABLES - PAR
+
+21. en la categoría 6.1 hay 4 productos de guantes de diferente tipo, se necesita elegir mínimo uno de esos 4
+
+22. SUMINISTROS QUIRURGICOS - ELECTROCIRUGIA - LAPIZ ELECTROQUIRURGICO - CON CABLE - DESECHABLE dice que es el consumible de equipo de electrocauterio, pero no tengo o no encuentro el producto que diga equipo de electro cauterio
+
+23. SUMINISTROS QUIRURGICOS - ELECTROCIRUGIA - LAPIZ ELECTROQUIRURGICO - CON CABLE - DESECHABLE incluye a fuerzas el producto SUMINISTROS QUIRURGICOS - ELECTROCIRUGIA - PLACA ELECTROQUIRURGICA - CON CABLE - DESECHABLE
+
+24. SUMINISTROS QUIRURGICOS - ELECTROCIRUGIA - LAPIZ ELECTROQUIRURGICO - CON CABLE - REUTILIZABLE incluye a fuerzas SUMINISTROS QUIRURGICOS - ELECTROCIRUGIA - PLACA ELECTROQUIRURGICA - CON CABLE - REUTILIZABLE
+
+25. en la categoría 6.1 hay 2 productos: SERVICIOS - HOSPITALARIOS - MANEJO DE RESIDUOS - RPBI - KG y SERVICIOS - HOSPITALARIOS - MANEJO DE RESIDUOS - EVENTO, al parecer la diferencia es que cobran lo mismo, por lo que me imagino que puede ser uno O el otro, pero no los 2, porque uno lo cobra por kg y otro lo cobra por evento, eso es lo que entendi
+
+25. SERVICIOS - HOSPITALARIOS - ANESTESIA - MAQUINA DE ANESTESIA - USO usa a fuerzas PRODUCTOS RESPIRATORIOS - CIRCUITO DE ANESTESIA - ADULTO - DESECHABLE
+
+26. SERVICIOS - HOSPITALARIOS - MONITOREO - MONITOR DE SIGNOS VITALES 6 PARAMETROS - CON CAPNOGRAFIA - USO usa a fuerzas 5 parches como uno que mencione anteriormente y también usa "linea de capnografía" pero no encuentro un producto que se llame asi o similar (???)
+
+27. en la categoría 6.1 hay 2 productos: SUMINISTROS QUIRURGICOS - TUBO DE ASPIRACION - ESTERIL - DESECHABLE - 3 METROS y SUMINISTROS QUIRURGICOS - TUBO DE ASPIRACION - ESTERIL - DESECHABLE - 6 METROS dice que tiene que estar mínimo 1 de los 2 y si se elige el de 3mts tienes que agarrar 2 ahuevo, si eliges el de 6, con uno que se seleccione en cuanto a cantidad
+
+28. en la categoría 6.2 el producto SERVICIOS - HOSPITALARIOS - TORRE DE LAPAROSCOPIA - CIRUGIA - MAYOR - LAPAROSCOPIA - USO usa la funda de torre, creo que ya lo había mencionado anteriormente
+
+29. en la categoría 7.0 hay varios tipos de pinzas aplicadoras de pins y están acompañadas por tamaño, que cuando marque una aplicadora de clips, se marque al menos 1 clip (porque también hay varios productos que son clips en esta misma categoría), pero que coincida con el tamaño, básicamente sigue siendo una relación de si marco x producto se va a marcar y ahuevo con una cantidad de 1
+
+30. mismo caso con el anterior, hay varias engrapadoras, si se selecciona una, se debe seleccionar ahuevo mínimo 1 de un tipo de grapa, porque hay varias, aquí no importa que sea el mismo tamaño que la engrapadora
+
+31. GASES - OXIGENO MEDICINAL - AREA RECUPERACION POSTANESTESICA - LITRO dice que necesita a fuerzas de una mascarilla, pero no se si se refiere a PRODUCTOS RESPIRATORIOS - MASCARILLA - LARINGEA - #4 o a PRODUCTOS RESPIRATORIOS - MASCARILLA - OXIGENO - ADULTO - CON MANGUERA
+
+32. SERVICIOS - HOSPITALARIOS - MONITOREO - MONITOR DE SIGNOS VITALES 6 PARAMETROS - USO usa los 5 parches, mismo caso que lo que ya había dicho de eso
+
+33. PRODUCTOS RESPIRATORIOS - VASO HUMIDIFICADOR - OXIGENO - DESECHABLE - FRASCO dice que si uso oxigeno debo de cargar este, no se que oxigeno sea la verdad, hay varios, me imagino que con cualquiera de esos
+
+34. en la categoría 8.0 hay varios productos que me piden mínimo 1, todo bien
+
+35. SERVICIOS - HOSPITALARIOS - MONITOREO - MONITOR DE SIGNOS VITALES 6 PARAMETROS - USO (6 HRS ADICIONALES) usa los 5 parches
+
+36. en la categoría 8.2 hay varios productos marcados como que se necesitan mínimo 1
+
+37. SERVICIOS - HOSPITALARIOS - MONITOREO - MONITOR DE SIGNOS VITALES 6 PARAMETROS - USO (12 HRS ADICIONALES) necesita 5 parches
+
+38. hay otros productos extra que se piden como mínimo 1 en caso de tener activada la categoría
+
+39. SERVICIOS - HOSPITALARIOS - TERAPEUTICOS - NEBULIZADOR - USO me pide a fuerzas una mascarilla para nebulizar, no se exactamente cual sea, ahorita vemos eso
+
+40. SERVICIOS - HOSPITALARIOS - TERAPEUTICOS - ASPIRADOR DE SECRECIONES - USO me pide a fuerzas mínimo 1 tubo de aspiración, ahorita vemos cual es o que pedo 
+
+41. SERVICIOS - HOSPITALARIOS - DIAGNOSTICOS - ELECTROCARDIOGRAMA - USO me pide gel, solo dice eso, igual ahorita vemos

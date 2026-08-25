@@ -1,9 +1,10 @@
 "use client"
+import { Category, ProductCategory } from "@/app/generated/prisma/client"
 import NavBarCatalogue from "@/components/catalogue/NavBarCatalogue"
 import DeleteManyModal from "@/components/catalogue/Products/DeleteManyModal"
 import DeleteProductModal from "@/components/catalogue/Products/DeleteProductModal"
 import UpdateProductStatus from "@/components/catalogue/Products/UpdateProductStatus"
-import { ProductWithType } from "@/lib/types"
+import { ProductWithType, ProductWithTypeAndCategories } from "@/lib/types"
 import axios from "axios"
 import { useRouter } from "next/navigation"
 import { useEffect, useRef, useState } from "react"
@@ -14,7 +15,8 @@ function page() {
 
   const router = useRouter()
 
-  const [products, setProducts] = useState<ProductWithType[]>([])
+  const [products, setProducts] = useState<ProductWithTypeAndCategories[]>([])
+  const [categories,setCategories] = useState<Category[]>([])
 
   const [selectedProduct, setSelectedProduct] = useState<ProductWithType | null>(null)
   const [isDeleteProductOpen, setIsDeleteProductOpen] = useState(false)
@@ -23,7 +25,7 @@ function page() {
 
   const [search, setSearch] = useState("")
 
-  const [results, setResults] = useState<ProductWithType[]>([])
+  const [results, setResults] = useState<ProductWithTypeAndCategories[]>([])
 
   const [selectedIds, setSelectedIds] = useState<number[]>([])
 
@@ -63,10 +65,24 @@ function page() {
     }
   }
 
+  async function fetchCategories() {
+    try {
+      const response = await axios.get("/api/categories")
+      setCategories(response.data)
+    } catch (e: any) {
+      if (e.response && e.response.data && e.response.data.message) {
+        toast.error(e.response.data.message)
+      } else {
+        toast.error(e.message)
+      }
+    }
+  }
+
   useEffect(() => {
     if (hasFetched.current) return
 
     fetchProducts()
+    fetchCategories()
     hasFetched.current = true
   }, [])
 
@@ -97,7 +113,11 @@ function page() {
     setResults(aux)
   }, [search, products])
 
-  
+  function getCategoryName(id:number){
+    const category = categories.find((c:Category)=>c.id===id)
+    if(category) return category.name
+    return "Desconocido"
+  }
 
   return (
     <div>
@@ -120,12 +140,13 @@ function page() {
               <th className="border-2 p-1">Equipo</th>
               <th className="border-2 p-1">Producto/Servicio</th>
               <th className="border-2 p-1">Precio Unitario</th>
+              <th className="border-2 p-1">Conceptos</th>
               <th className="border-2 p-1">Acciones</th>
               <th className="border-2 p-1">Estado</th>
             </tr>
           </thead>
           <tbody>
-            {results.map((p: ProductWithType) => (
+            {results.map((p: ProductWithTypeAndCategories) => (
               <tr key={p.id}>
                 <td className="border-2 p-1">
                   <input type="checkbox" checked={selectedIds.includes(p.id)} onChange={() => toggleSelection(p.id)} />
@@ -138,6 +159,11 @@ function page() {
                 <td className="border-2 p-1">{p.equipment ? "Si" : "No"}</td>
                 <td className="border-2 p-1">{p.service ? "Servicio" : "Producto"}</td>
                 <td className="border-2 p-1">${Number(p.price).toFixed(2)} USD</td>
+                <td className="border-2 p-1">
+                  {p.productCategories.map((pc:ProductCategory)=>(
+                    <p key={pc.id}>{getCategoryName(pc.categoryId)}</p>
+                  ))}
+                </td>
                 <td className="border-2 p-1">
                   <button className="underline cursor-pointer" onClick={() => router.push("/admin/catalogo/productos/editar/" + p.id)}>Editar</button>
                   <button onClick={() => { setSelectedProduct(p); setIsDeleteProductOpen(true) }} className="underline cursor-pointer">Eliminar</button>

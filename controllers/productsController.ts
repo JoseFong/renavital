@@ -8,7 +8,8 @@ import { exit } from "process";
 export async function getAllProducts() {
     const products = await prisma.product.findMany({
         include: {
-            productType: true
+            productType: true,
+            productCategories: true
         }
     })
 
