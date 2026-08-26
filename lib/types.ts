@@ -1,4 +1,4 @@
-import { Anesthesia, Procedure, ProductCategory, ProductType, Stay } from "@/app/generated/prisma/client"
+import { Anesthesia, Category, Procedure, Product, ProductCategory, ProductType, RuleTarget, Stay } from "@/app/generated/prisma/client"
 import { Decimal } from "@prisma/client/runtime/client"
 
 export type ProductWithType = {
@@ -50,4 +50,23 @@ export type ProductWithTypeAndCategories = {
     service: boolean,
     productType: ProductType,
     productCategories: ProductCategory[]
+}
+
+export type RuleTargetInfo = {
+    id: number
+    productId: number
+    quantity: number
+    ruleId: number
+    product: Product
+}
+
+export type RuleInfo = {
+    id: number,
+    triggerType: string,
+    type: string,
+    productSourceId: number|null,
+    categorySourceId: number|null,
+    ruleTargets: RuleTargetInfo[],
+    productSource: Product|null,
+    categorySource: Category|null
 }

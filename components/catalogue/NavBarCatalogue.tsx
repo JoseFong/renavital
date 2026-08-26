@@ -19,6 +19,7 @@ function NavBarCatalogue({selected}:{selected:string}) {
         <button onClick={()=>goToPage("anestesia")} className={`${selected==="Anestesia" && "bg-blue-600"} hover:bg-blue-500 p-4 transition-all cursor-pointer`}>Anestesia</button>
         <button onClick={()=>goToPage("estancia")} className={`${selected==="Estancia" && "bg-blue-600"} hover:bg-blue-500 p-4 transition-all cursor-pointer`}>Estancia</button>
         <button onClick={()=>goToPage("configuraciones")} className={`${selected==="Configuraciones" && "bg-blue-600"} hover:bg-blue-500 p-4 transition-all cursor-pointer`}>Configuraciones</button>
+        <button onClick={()=>goToPage("reglas")} className={`${selected==="reglas" && "bg-blue-600"} hover:bg-blue-500 p-4 transition-all cursor-pointer`}>Reglas</button>
     </div>
   )
 }

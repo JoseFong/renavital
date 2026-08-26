@@ -19,6 +19,9 @@ function page() {
   const [isUpdateStatusOpen,setIsUpdateStatusOpen] = useState(false)
   const [isDeleteOpen,setIsDeleteOpen] = useState(false)
 
+  const [search,setSearch] = useState("")
+  const [results,setResults] = useState<ConfigurationInfo[]>([])
+
   async function fetchConfigurations() {
     try {
       setLoading(true)
@@ -41,11 +44,28 @@ function page() {
     fetchConfigurations()
   },[])
 
+  useEffect(()=>{
+    if(search.trim()===""){
+      setResults(configurations)
+    }else{
+      let aux = [...configurations]
+      aux = aux.filter((a:ConfigurationInfo)=>a.code.includes(search.trim().toUpperCase()) || a.anesthesia.name.includes(search.trim().toUpperCase()) || a.procedure.name.includes(search.trim().toUpperCase()) || a.stay.name.includes(search.trim().toUpperCase()))
+      setResults(aux)
+    }
+  },[search])
+
+  useEffect(()=>{
+    if(configurations)
+        setResults(configurations)
+  },[configurations])
+
   return (
     <div>
       <NavBarCatalogue selected="Configuraciones" />
       <div className="p-5 flex flex-col gap-1">
-        <h1 className="font-bold">Configuraciones</h1>
+        <h1 className="font-bold">Configuraciones</h1> 
+        <input placeholder="Búsqueda" value={search} onChange={(e)=>setSearch(e.target.value)}/>
+        <label>{results.length} resultados</label>
         <button onClick={()=>router.push("/admin/catalogo/configuraciones/nueva")} className="underline cursor-pointer">Registrar</button>
         <table>
           <thead>
@@ -61,7 +81,7 @@ function page() {
             </tr>
           </thead>
           <tbody>
-            {configurations.map((c:ConfigurationInfo)=>(
+            {results.map((c:ConfigurationInfo)=>(
               <tr key={c.id}>
                 <td className="border-2 p-1">{c.id}</td>
                 <td className="border-2 p-1">{c.code}</td>

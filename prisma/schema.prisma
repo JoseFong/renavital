@@ -13,97 +13,123 @@ datasource db {
 }
 
 model Product {
-  id Int @id @default(autoincrement())
-  name String
-  equipment Boolean
-  price Decimal @db.Decimal(10,2)
-  active Boolean
-  service Boolean
+  id            Int     @id @default(autoincrement())
+  name          String
+  equipment     Boolean
+  price         Decimal @db.Decimal(10, 2)
+  active        Boolean
+  service       Boolean
   productTypeId Int?
 
-  productType ProductType? @relation(fields: [productTypeId],references: [id])
+  productType       ProductType?      @relation(fields: [productTypeId], references: [id])
   productCategories ProductCategory[]
+  ruleTargets       RuleTarget[]
+  rules             Rule[]
 }
 
 model ProductType {
-  id Int @id @default(autoincrement())
-  name String @unique
+  id     Int     @id @default(autoincrement())
+  name   String  @unique
   active Boolean
 
   products Product[]
 }
 
 model Category {
-  id Int @id @default(autoincrement())
-  name String @unique
+  id     Int     @id @default(autoincrement())
+  name   String  @unique
   active Boolean
 
-  productCategories ProductCategory[]
+  productCategories       ProductCategory[]
   configurationCategories ConfigurationCategories[]
+  rules                   Rule[]
 }
 
-model ProductCategory{
-  id Int @id @default(autoincrement())
-  productId Int
+model ProductCategory {
+  id         Int @id @default(autoincrement())
+  productId  Int
   categoryId Int
-  quantity Int
+  quantity   Int
 
-  product Product @relation(fields: [productId],references: [id],onDelete: Cascade)
-  category Category @relation(fields: [categoryId],references: [id],onDelete: Cascade)
+  product  Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 
-  @@unique([productId,categoryId])
+  @@unique([productId, categoryId])
 }
 
 model Procedure {
-  id Int @id @default(autoincrement())
-  code String
-  name String
+  id     Int     @id @default(autoincrement())
+  code   String
+  name   String
   active Boolean
 
   configurations Configuration[]
 }
 
 model Anesthesia {
-  id Int @id @default(autoincrement())
-  code String
-  name String
+  id     Int     @id @default(autoincrement())
+  code   String
+  name   String
   active Boolean
 
   configurations Configuration[]
 }
 
 model Stay {
-  id Int @id @default(autoincrement())
-  code String
-  name String
+  id     Int     @id @default(autoincrement())
+  code   String
+  name   String
   active Boolean
 
   configurations Configuration[]
 }
 
 model Configuration {
-  id Int @id @default(autoincrement())
-  code String
-  procedureId Int
+  id           Int     @id @default(autoincrement())
+  code         String
+  procedureId  Int
   anesthesiaId Int
-  stayId Int
-  active Boolean
+  stayId       Int
+  active       Boolean
 
-  procedure Procedure @relation(fields: [procedureId], references: [id], onDelete: Cascade)
-  anesthesia Anesthesia @relation(fields: [anesthesiaId],references: [id], onDelete: Cascade)
-  stay Stay @relation(fields: [stayId], references: [id], onDelete: Cascade)
+  procedure  Procedure  @relation(fields: [procedureId], references: [id], onDelete: Cascade)
+  anesthesia Anesthesia @relation(fields: [anesthesiaId], references: [id], onDelete: Cascade)
+  stay       Stay       @relation(fields: [stayId], references: [id], onDelete: Cascade)
 
   configurationCategories ConfigurationCategories[]
 }
 
 model ConfigurationCategories {
-  id Int @id @default(autoincrement())
+  id              Int     @id @default(autoincrement())
   configurationId Int
-  categoryId Int
-  active Boolean
-  
-  configuration Configuration @relation(fields: [configurationId], references: [id], onDelete: Cascade)
-  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId      Int
+  active          Boolean
 
-  @@unique([configurationId,categoryId])
+  configuration Configuration @relation(fields: [configurationId], references: [id], onDelete: Cascade)
+  category      Category      @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@unique([configurationId, categoryId])
+}
+
+model Rule {
+  id               Int    @id @default(autoincrement())
+  triggerType      String
+  type             String
+  productSourceId  Int?
+  categorySourceId Int?
+
+  categorySource Category? @relation(fields: [categorySourceId], references: [id], onDelete: Cascade)
+  productSource  Product?  @relation(fields: [productSourceId], references: [id], onDelete: Cascade)
+
+  ruleTargets RuleTarget[]
+}
+
+model RuleTarget {
+  id        Int @id @default(autoincrement())
+  productId Int
+  quantity  Int
+  ruleId    Int
+
+  rule    Rule    @relation(fields: [ruleId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 }
