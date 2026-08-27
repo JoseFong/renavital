@@ -151,8 +151,8 @@ function page() {
                         ))}
                     </select>
                 }
-                {(triggerType === "PRODUCT" && type !== "SOME") && <label>Seleccione el producto que disparará la regla</label>}
-                {(triggerType === "PRODUCT" && type !== "SOME") &&
+                {(triggerType === "PRODUCT") && <label>Seleccione el producto que disparará la regla</label>}
+                {(triggerType === "PRODUCT") &&
                     <SelectSearch options={products} selected={productSourceId} onChange={setProductSourceId} />
                 }
                 ----------------------------------------------------------------------------------------------------

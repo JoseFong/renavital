@@ -120,3 +120,32 @@ export async function getCategoriesFromConfiguration(id:number){
     const filteredCategories = category.filter((c:Category)=>configurationCategories.some((cc:ConfigurationCategories)=>c.id===cc.categoryId))
     return filteredCategories
 }
+
+export async function getFullInfoFromConfiguration(id:number){
+    let exists = await prisma.configuration.findFirst({
+        where: {
+            id:id
+        },
+        include: {
+            anesthesia: true,
+            procedure: true,
+            stay: true,
+            configurationCategories: {
+                include: {
+                    category: {
+                        include: {
+                            productCategories: {
+                                include: {
+                                    product: true
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    })
+
+    if(!exists) throw new Error("Configuración no encontrada.")
+    return exists
+}

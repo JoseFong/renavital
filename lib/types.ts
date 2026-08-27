@@ -1,4 +1,4 @@
-import { Anesthesia, Category, Procedure, Product, ProductCategory, ProductType, RuleTarget, Stay } from "@/app/generated/prisma/client"
+import { Anesthesia, Category, Configuration, ConfigurationCategories, Procedure, Product, ProductCategory, ProductType, RuleTarget, Stay } from "@/app/generated/prisma/client"
 import { Decimal } from "@prisma/client/runtime/client"
 
 export type ProductWithType = {
@@ -69,4 +69,43 @@ export type RuleInfo = {
     ruleTargets: RuleTargetInfo[],
     productSource: Product|null,
     categorySource: Category|null
+}
+
+
+//////////TYPES PARA CONFIGURACIONES, USADO EN EL COTIZADOR///////////
+//ESTOS SIGUIENTES TIPOS SE USAN PARA CREAR UN SOLO TIPO DE DATO GIGANTE QUE TIENE TODA LA INFORMACÍÓN
+//DE UNA CONFIGURACIÓN
+
+export type ConfigurationCompleteInfo = {
+    id: number,
+    active: boolean,
+    anesthesiaId: number,
+    anesthesia: Anesthesia,
+    code: string,
+    procedureId: number,
+    procedure: Procedure,
+    stayId: number,
+    stay: Stay,
+    configurationCategories: ConfigurationCategoryInfo[]
+}
+
+export type ConfigurationCategoryInfo = {
+    id: number,
+    active: boolean,
+    categoryId: number,
+    category: CategoryInfo
+}
+
+export type CategoryInfo = {
+    id: number,
+    active: boolean,
+    name: string,
+    productCategories: ProductCategoryInfo[]
+}
+
+export type ProductCategoryInfo = {
+    id: number,
+    productId: number,
+    product: Product,
+    quantity: number
 }

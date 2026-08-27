@@ -15,7 +15,6 @@ export async function createRule(data: any) {
     if (triggerType === "PRODUCT") categorySourceId = null
     if (triggerType === "CATEGORY") productSourceId = null
 
-    if (type === "SOME") productSourceId = null
 
     const rule = await prisma.rule.create({
         data: {
