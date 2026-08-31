@@ -117,3 +117,11 @@ export async function updateAnesthesiaStatus(id:number){
         }
     })
 }
+
+export async function getActiveAnesthesias(){
+    return await prisma.anesthesia.findMany({
+        where: {
+            active: true
+        }
+    })
+}

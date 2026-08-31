@@ -1,16 +1,23 @@
-import { createStay, getAllStays } from "@/controllers/stayController";
+import { createStay, getActiveStays, getAllStays } from "@/controllers/stayController";
 import { NextRequest, NextResponse } from "next/server";
 
 /**
  * Handler para consultar todos los tipos de estancias
  * @returns todos los tipos de estancias
  */
-export async function GET(){
-    try{
+export async function GET(req:NextRequest) {
+    try {
+        const active = req.nextUrl.searchParams.get("active")
+
+        if (active === "true") {
+            const stays = await getActiveStays()
+            return NextResponse.json(stays)
+        }
+
         const stays = await getAllStays()
         return NextResponse.json(stays)
-    }catch(e:any){
-        return NextResponse.json({message:e.message},{status:500})
+    } catch (e: any) {
+        return NextResponse.json({ message: e.message }, { status: 500 })
     }
 }
 
@@ -19,14 +26,14 @@ export async function GET(){
  * @param req informacion del nuevo tipo de estancia
  * @returns respuesta del servidor
  */
-export async function POST(req:NextRequest){
-    try{
+export async function POST(req: NextRequest) {
+    try {
         const data = await req.json()
 
         await createStay(data)
 
-        return NextResponse.json({status:200})
-    }catch(e:any){
-        return NextResponse.json({message:e.message},{status:500})
+        return NextResponse.json({ status: 200 })
+    } catch (e: any) {
+        return NextResponse.json({ message: e.message }, { status: 500 })
     }
 }

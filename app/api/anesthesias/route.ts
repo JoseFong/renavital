@@ -1,12 +1,19 @@
-import { createAnesthesia, getAllAnesthesias } from "@/controllers/anesthesiaController"
+import { createAnesthesia, getActiveAnesthesias, getAllAnesthesias } from "@/controllers/anesthesiaController"
 import { NextRequest, NextResponse } from "next/server"
 
 /**
  * handler para consultar tipos de anestesias
  * @returns todos los tipos de anestesia
  */
-export async function GET(){
+export async function GET(req: NextRequest){
     try{
+        const active = req.nextUrl.searchParams.get("active")
+
+        if(active==="true"){
+            const anesthesias = await getActiveAnesthesias()
+            return NextResponse.json(anesthesias)
+        }
+
         const anesthesias = await getAllAnesthesias()
         return NextResponse.json(anesthesias)
     }catch(e:any){

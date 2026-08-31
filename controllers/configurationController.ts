@@ -149,3 +149,42 @@ export async function getFullInfoFromConfiguration(id:number){
     if(!exists) throw new Error("Configuración no encontrada.")
     return exists
 }
+
+export async function getFullInfoFromActiveConfiguration(id:number){
+    let exists = await prisma.configuration.findFirst({
+        where: {
+            id:id
+        },
+        include: {
+            anesthesia: true,
+            procedure: true,
+            stay: true,
+            configurationCategories: {
+                where: {
+                    category: {
+                        active: true
+                    }
+                },
+                include: {
+                    category: {
+                        include: {
+                            productCategories: {
+                                where:{
+                                    product: {
+                                        active: true
+                                    }
+                                },
+                                include: {
+                                    product: true
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    })
+
+    if(!exists) throw new Error("Configuración no encontrada.")
+    return exists
+}

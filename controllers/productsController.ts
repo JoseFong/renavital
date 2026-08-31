@@ -208,3 +208,19 @@ export async function createManyProducts(data:any){
         }))
     })
 }
+
+export async function getActiveProducts(){
+    return await prisma.product.findMany({
+        where: {
+            active: true
+        }
+    })
+}
+
+export async function getInactiveProducts(){
+    return await prisma.product.findMany({
+        where: {
+            active: false
+        }
+    })
+}

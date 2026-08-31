@@ -125,3 +125,11 @@ export async function deleteStay(id:number){
         }
     })
 }
+
+export async function getActiveStays(){
+    return await prisma.stay.findMany({
+        where: {
+            active: true
+        }
+    })
+}

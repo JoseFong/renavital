@@ -1,12 +1,24 @@
-import { createProduct, deleteManyProducts, getAllProducts } from "@/controllers/productsController";
+import { createProduct, deleteManyProducts, getActiveProducts, getAllProducts, getInactiveProducts } from "@/controllers/productsController";
 import { NextRequest, NextResponse } from "next/server";
 
 /**
  * Handler GET productos
  * @returns arreglo de todas los productos
  */
-export async function GET(){
+export async function GET(req:NextRequest){
     try{
+        const active = req.nextUrl.searchParams.get("active")
+
+        if(active==="true"){
+            const products = await getActiveProducts()
+            return NextResponse.json(products)
+        }
+
+        if(active==="false"){
+            const products = await getInactiveProducts()
+            return NextResponse.json(products)
+        }
+
         const products = await getAllProducts()
         return NextResponse.json(products)
     }catch(e:any){

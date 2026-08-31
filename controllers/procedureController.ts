@@ -123,3 +123,11 @@ export async function updateProcedureStatus(id:number){
         }
     })
 }
+
+export async function getActiveProcedures(){
+    return await prisma.procedure.findMany({
+        where: {
+            active: true
+        }
+    })
+}

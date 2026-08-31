@@ -16,7 +16,7 @@ import {
 } from "@/lib/types"
 import axios from "axios"
 import { useEffect, useRef, useState } from "react"
-import toast from "react-hot-toast"
+import toast, { useToaster } from "react-hot-toast"
 
 function page() {
 
@@ -27,8 +27,7 @@ function page() {
   const [stays, setStays] = useState<Stay[]>([])
   const [configurations, setConfigurations] = useState<Configuration[]>([])
 
-  const [configuration, setConfiguration] =
-    useState<ConfigurationCompleteInfo | null>(null)
+  const [configuration, setConfiguration] = useState<ConfigurationCompleteInfo | null>(null)
 
   const [selectedProcedure, setSelectedProcedure] = useState("-1")
   const [selectedAnesthesia, setSelectedAnesthesia] = useState("-1")
@@ -36,13 +35,19 @@ function page() {
 
   const [isLoadingOpen, setIsLoadingOpen] = useState(false)
 
+  const [hasAgreement, setHasAgreement] = useState(false)
+
+  const [percentDisc, setPercentDisc] = useState("")
+  const [disc, setDisc] = useState("")
+
+
   ////////////
   // OBTENCION DE INFORMACION
   ////////////
 
   async function fetchProcedures() {
     try {
-      const response = await axios.get("/api/procedures")
+      const response = await axios.get("/api/procedures?active=true")
       setProcedures(response.data)
     } catch (e: any) {
       toast.error(
@@ -53,7 +58,7 @@ function page() {
 
   async function fetchAnesthesias() {
     try {
-      const response = await axios.get("/api/anesthesias")
+      const response = await axios.get("/api/anesthesias?active=true")
       setAnesthesias(response.data)
     } catch (e: any) {
       toast.error(
@@ -64,7 +69,7 @@ function page() {
 
   async function fetchStays() {
     try {
-      const response = await axios.get("/api/stays")
+      const response = await axios.get("/api/stays?active=true")
       setStays(response.data)
     } catch (e: any) {
       toast.error(
@@ -165,284 +170,173 @@ function page() {
   let filteredConfigurations = [...configurations]
 
   if (selectedProcedure !== "-1") {
-
-    filteredConfigurations =
-      filteredConfigurations.filter(
-        c =>
-          c.procedureId === Number(selectedProcedure)
-      )
-
+    filteredConfigurations = filteredConfigurations.filter(c => c.procedureId === Number(selectedProcedure))
   }
 
   if (selectedAnesthesia !== "-1") {
-
-    filteredConfigurations =
-      filteredConfigurations.filter(
-        c =>
-          c.anesthesiaId === Number(selectedAnesthesia)
-      )
-
+    filteredConfigurations = filteredConfigurations.filter(c => c.anesthesiaId === Number(selectedAnesthesia))
   }
 
   if (selectedStay !== "-1") {
-
-    filteredConfigurations =
-      filteredConfigurations.filter(
-        c =>
-          c.stayId === Number(selectedStay)
-      )
-
+    filteredConfigurations = filteredConfigurations.filter(c => c.stayId === Number(selectedStay))
   }
 
   /////////////
   // FILTRAR ANESTESIAS
   /////////////
 
-  let configurationsForAnesthesia =
-    [...configurations]
+  let configurationsForAnesthesia = [...configurations]
 
   if (selectedProcedure !== "-1") {
-
-    configurationsForAnesthesia =
-      configurationsForAnesthesia.filter(
-        c =>
-          c.procedureId === Number(selectedProcedure)
-      )
-
+    configurationsForAnesthesia = configurationsForAnesthesia.filter(c => c.procedureId === Number(selectedProcedure))
   }
 
-  const filteredAnesthesias =
-    anesthesias.filter(
-      a =>
-        configurationsForAnesthesia.some(
-          c =>
-            c.anesthesiaId === a.id
-        )
-    )
+  const filteredAnesthesias = anesthesias.filter(a => configurationsForAnesthesia.some(c => c.anesthesiaId === a.id))
 
   /////////////
   // FILTRAR ESTANCIAS
   /////////////
 
-  let configurationsForStay =
-    [...configurations]
+  let configurationsForStay = [...configurations]
 
   if (selectedProcedure !== "-1") {
-
-    configurationsForStay =
-      configurationsForStay.filter(
-        c =>
-          c.procedureId === Number(selectedProcedure)
-      )
-
+    configurationsForStay = configurationsForStay.filter(c => c.procedureId === Number(selectedProcedure))
   }
 
   if (selectedAnesthesia !== "-1") {
-
-    configurationsForStay =
-      configurationsForStay.filter(
-        c =>
-          c.anesthesiaId === Number(selectedAnesthesia)
-      )
-
+    configurationsForStay = configurationsForStay.filter(c => c.anesthesiaId === Number(selectedAnesthesia))
   }
 
-  const filteredStays =
-    stays.filter(
-      s =>
-        configurationsForStay.some(
-          c =>
-            c.stayId === s.id
-        )
-    )
+  const filteredStays = stays.filter(s => configurationsForStay.some(c => c.stayId === s.id))
 
   /////////////
   // OBTENER CONFIGURACION COMPLETA
   /////////////
 
   useEffect(() => {
-
     if (
       selectedProcedure === "-1" ||
       selectedAnesthesia === "-1" ||
       selectedStay === "-1"
     ) {
-
       setConfiguration(null)
       return
-
     }
 
     if (filteredConfigurations.length !== 1) {
-
       setConfiguration(null)
       return
-
     }
 
     fetchConfiguration(
       filteredConfigurations[0].id
     )
 
-  }, [
-    selectedProcedure,
-    selectedAnesthesia,
-    selectedStay
-  ])
+  }, [selectedProcedure, selectedAnesthesia, selectedStay])
 
   async function fetchConfiguration(id: number) {
-
     try {
-
       setIsLoadingOpen(true)
 
-      const response =
-        await axios.get(
-          "/api/configurations/configurationsFullInfo/" + id
-        )
+      const response = await axios.get("/api/configurations/configurationsFullInfo/" + id + "?active=true")
 
       setConfiguration(response.data)
-
       setIsLoadingOpen(false)
-
     } catch (e: any) {
-
       setIsLoadingOpen(false)
-
       toast.error(
         e.response?.data?.message ?? e.message
       )
-
     }
-
   }
 
   /////////////
   // PRODUCTOS DE LA COTIZACION
   /////////////
 
-  const [selectedProducts, setSelectedProducts] =
-    useState<
-      {
-        id: number
-        categoryId: number
-        quantity: number
-      }[]
-    >([])
+  const [selectedProducts, setSelectedProducts] = useState<{
+    id: number
+    categoryId: number
+    quantity: number
+  }[]
+  >([])
 
   /////////////
   // INICIALIZAR PRODUCTOS
   /////////////
 
   useEffect(() => {
-
     if (!configuration) return
-
     let aux: {
       id: number
       categoryId: number
       quantity: number
     }[] = []
 
-    configuration.configurationCategories.map(
-      (cc: ConfigurationCategoryInfo) => {
-
-        cc.category.productCategories.map(
-          (pc: ProductCategoryInfo) => {
-
-            aux.push({
-              id: pc.productId,
-              categoryId: cc.category.id,
-              quantity: pc.quantity
-            })
-
-          }
-        )
-
-      }
-    )
+    configuration.configurationCategories.map((cc: ConfigurationCategoryInfo) => {
+      cc.category.productCategories.map((pc: ProductCategoryInfo) => {
+        aux.push({
+          id: pc.productId,
+          categoryId: cc.category.id,
+          quantity: pc.quantity
+        })
+      })
+    })
 
     setSelectedProducts(aux)
-
   }, [configuration])
 
   /////////////
   // AUMENTAR PRODUCTO
   /////////////
 
-  function increaseProduct(
-    productId: number,
-    categoryId: number
-  ) {
-
+  function increaseProduct(productId: number, categoryId: number) {
     setSelectedProducts(prev =>
       prev.map(p =>
         p.id === productId &&
-        p.categoryId === categoryId
+          p.categoryId === categoryId
           ? {
-              ...p,
-              quantity: p.quantity + 1
-            }
+            ...p,
+            quantity: p.quantity + 1
+          }
           : p
       )
     )
-
   }
 
   /////////////
   // DISMINUIR PRODUCTO
   /////////////
 
-  function decreaseProduct(
-    productId: number,
-    categoryId: number
-  ) {
-
+  function decreaseProduct(productId: number, categoryId: number) {
     setSelectedProducts(prev =>
       prev.map(p =>
         p.id === productId &&
-        p.categoryId === categoryId &&
-        p.quantity > 0
+          p.categoryId === categoryId &&
+          p.quantity > 0
           ? {
-              ...p,
-              quantity: p.quantity - 1
-            }
+            ...p,
+            quantity: p.quantity - 1
+          }
           : p
       )
     )
-
   }
 
   /////////////
   // CATEGORIAS ABIERTAS
   /////////////
 
-  const [showing, setShowing] =
-    useState<number[]>([])
+  const [showing, setShowing] = useState<number[]>([])
 
   function toggleShow(id: number) {
-
     if (showing.includes(id)) {
-
-      const aux =
-        showing.filter(
-          i =>
-            i !== id
-        )
-
+      const aux = showing.filter(i => i !== id)
       setShowing(aux)
-
     } else {
-
-      const aux = [
-        ...showing,
-        id
-      ]
-
+      const aux = [...showing, id]
       setShowing(aux)
-
     }
-
   }
 
   /////////////
@@ -481,6 +375,49 @@ function page() {
 
   }
 
+  let finalTotalNoEquipment = 0
+
+  if (configuration) {
+    configuration.configurationCategories.forEach((cc) => {
+      cc.category.productCategories
+        .filter((pc) => !pc.product.equipment)
+        .forEach((pc) => {
+          const quantity =
+            selectedProducts.find(
+              sp =>
+                sp.id === pc.productId &&
+                sp.categoryId === cc.category.id
+            )?.quantity ?? 0
+
+          finalTotalNoEquipment +=
+            Number(pc.product.price) * quantity
+        })
+    })
+  }
+
+  const currentTotal = hasAgreement ? finalTotalNoEquipment : finalTotal
+
+  const discountAmount = currentTotal * (Number(percentDisc || 0) / 100)
+
+  const finalPrice = currentTotal - discountAmount
+
+  useEffect(() => {
+    if (percentDisc === "") {
+      setDisc("")
+      return
+    }
+
+    if (currentTotal === 0) {
+      setDisc("")
+      return
+    }
+
+    setDisc(
+      (currentTotal * (Number(percentDisc) / 100)).toString()
+    )
+
+  }, [currentTotal])
+
   /////////////
   // RETURN
   /////////////
@@ -515,10 +452,9 @@ function page() {
                   )
                 }
                 className={`
-                  ${
-                    Number(selectedProcedure) === p.id
-                      ? "bg-green-100 border-green-300 hover:bg-green-200 hover:border-green-400"
-                      : "border-zinc-200 bg-zinc-100 hover:bg-zinc-200 hover:border-zinc-300"
+                  ${Number(selectedProcedure) === p.id
+                    ? "bg-green-100 border-green-300 hover:bg-green-200 hover:border-green-400"
+                    : "border-zinc-200 bg-zinc-100 hover:bg-zinc-200 hover:border-zinc-300"
                   }
 
                   disabled:pointer-events-none
@@ -545,10 +481,9 @@ function page() {
 
         <div
           className={`
-            ${
-              selectedProcedure === "-1"
-                ? "opacity-60"
-                : ""
+            ${selectedProcedure === "-1"
+              ? "opacity-60"
+              : ""
             }
 
             transition-all
@@ -573,10 +508,9 @@ function page() {
                   )
                 }
                 className={`
-                  ${
-                    Number(selectedAnesthesia) === a.id
-                      ? "bg-green-100 border-green-300 hover:bg-green-200 hover:border-green-400"
-                      : "border-zinc-200 bg-zinc-100 hover:bg-zinc-200 hover:border-zinc-300"
+                  ${Number(selectedAnesthesia) === a.id
+                    ? "bg-green-100 border-green-300 hover:bg-green-200 hover:border-green-400"
+                    : "border-zinc-200 bg-zinc-100 hover:bg-zinc-200 hover:border-zinc-300"
                   }
 
                   disabled:pointer-events-none
@@ -603,10 +537,9 @@ function page() {
 
         <div
           className={`
-            ${
-              selectedAnesthesia === "-1"
-                ? "opacity-60"
-                : ""
+            ${selectedAnesthesia === "-1"
+              ? "opacity-60"
+              : ""
             }
 
             transition-all
@@ -631,10 +564,9 @@ function page() {
                   )
                 }
                 className={`
-                  ${
-                    Number(selectedStay) === s.id
-                      ? "bg-green-100 border-green-300 hover:bg-green-200 hover:border-green-400"
-                      : "border-zinc-200 bg-zinc-100 hover:bg-zinc-200 hover:border-zinc-300"
+                  ${Number(selectedStay) === s.id
+                    ? "bg-green-100 border-green-300 hover:bg-green-200 hover:border-green-400"
+                    : "border-zinc-200 bg-zinc-100 hover:bg-zinc-200 hover:border-zinc-300"
                   }
 
                   disabled:pointer-events-none
@@ -659,7 +591,7 @@ function page() {
 
           <div className="flex flex-col gap-1">
 
-            {configuration.configurationCategories.map(
+            {configuration.configurationCategories.sort((a, b) => a.category.name.localeCompare(b.category.name)).map(
               (cc: ConfigurationCategoryInfo) => {
 
                 const total =
@@ -722,55 +654,54 @@ function page() {
                       cc.category.id
                     ) && (
 
-                      <div className="grid grid-cols-5 gap-3">
+                        <div className="grid grid-cols-5 gap-3">
 
-                        {cc.category.productCategories.map(
-                          (pc: ProductCategoryInfo) => {
+                          {cc.category.productCategories.map(
+                            (pc: ProductCategoryInfo) => {
 
-                            const productQuantity =
-                              selectedProducts.find(
-                                sp =>
-                                  sp.id === pc.productId &&
-                                  sp.categoryId === cc.category.id
-                              )?.quantity ?? 0
+                              const productQuantity =
+                                selectedProducts.find(
+                                  sp =>
+                                    sp.id === pc.productId &&
+                                    sp.categoryId === cc.category.id
+                                )?.quantity ?? 0
 
-                            return (
+                              return (
 
-                              <div
-                                key={pc.id}
-                                className={`
-                                  ${
-                                    productQuantity > 0
+                                <div
+                                  key={pc.id}
+                                  className={`
+                                  ${productQuantity > 0
                                       ? "bg-green-100 border-green-300"
                                       : "bg-zinc-100 border-zinc-200"
-                                  }
+                                    }
 
                                   border-4
                                   rounded-xl
                                   p-3
                                   transition-all
                                 `}
-                              >
+                                >
 
-                                <div className="flex flex-col gap-3">
+                                  <div className="flex flex-col gap-3">
 
-                                  <div className="text-center">
-                                    {pc.product.name}
-                                  </div>
+                                    <div className="text-center">
+                                      {pc.product.name}
+                                    </div>
 
-                                  <div className="flex items-center justify-center gap-3">
+                                    <div className="flex items-center justify-center gap-3">
 
-                                    <button
-                                      onClick={() =>
-                                        decreaseProduct(
-                                          pc.productId,
-                                          cc.category.id
-                                        )
-                                      }
-                                      disabled={
-                                        productQuantity === 0
-                                      }
-                                      className="
+                                      <button
+                                        onClick={() =>
+                                          decreaseProduct(
+                                            pc.productId,
+                                            cc.category.id
+                                          )
+                                        }
+                                        disabled={
+                                          productQuantity === 0
+                                        }
+                                        className="
                                         border
                                         rounded-lg
                                         px-3
@@ -779,46 +710,46 @@ function page() {
                                         disabled:opacity-50
                                         disabled:cursor-not-allowed
                                       "
-                                    >
-                                      -
-                                    </button>
+                                      >
+                                        -
+                                      </button>
 
-                                    <span className="min-w-8 text-center font-bold">
-                                      {productQuantity}
-                                    </span>
+                                      <span className="min-w-8 text-center font-bold">
+                                        {productQuantity}
+                                      </span>
 
-                                    <button
-                                      onClick={() =>
-                                        increaseProduct(
-                                          pc.productId,
-                                          cc.category.id
-                                        )
-                                      }
-                                      className="
+                                      <button
+                                        onClick={() =>
+                                          increaseProduct(
+                                            pc.productId,
+                                            cc.category.id
+                                          )
+                                        }
+                                        className="
                                         border
                                         rounded-lg
                                         px-3
                                         py-1
                                         cursor-pointer
                                       "
-                                    >
-                                      +
-                                    </button>
+                                      >
+                                        +
+                                      </button>
+
+                                    </div>
 
                                   </div>
 
                                 </div>
 
-                              </div>
+                              )
 
-                            )
+                            }
+                          )}
 
-                          }
-                        )}
+                        </div>
 
-                      </div>
-
-                    )}
+                      )}
 
                     Subtotal: $
                     {total.toFixed(2)}
@@ -833,21 +764,88 @@ function page() {
 
               }
             )}
-
-            {/* TOTAL */}
-
-            <p className="font-bold text-lg">
-              TOTAL: $
-              {finalTotal.toFixed(2)}
-              USD
-              {" | "}
-              ${(finalTotal * 25).toFixed(2)}
-              MXN
-            </p>
-
           </div>
 
         )}
+
+        {configuration &&
+          <div className="flex flex-row gap-1">
+            <input type="checkbox" checked={hasAgreement} onChange={() => setHasAgreement(!hasAgreement)} />
+            <p>¿Médico con convenio?</p>
+          </div>
+        }
+
+        {configuration &&
+          <div className="flex flex-row gap-2 items-center">
+            <div
+              className={`${(disc !== "" && disc !== "0") ? "bg-green-100 border-green-300" : "bg-zinc-100 border-zinc-200"} flex flex-row items-center pl-3 border-4 rounded-xl transition-all`}
+            >
+              <p className="text-zinc-600">%</p>
+              <input
+                className="outline-none p-3"
+                placeholder="0"
+                min={0}
+                max={100}
+                type="number"
+                value={percentDisc}
+                onChange={(e) => {
+                  let value = e.target.value
+
+                  if (Number(value) > 100) value = "100"
+
+                  setPercentDisc(value)
+                  setDisc(
+                    (currentTotal * (Number(value) / 100)).toString()
+                  )
+                }}
+              />
+
+            </div>
+            <div
+              className={`${(disc !== "" && disc !== "0") ? "bg-green-100 border-green-300" : "bg-zinc-100 border-zinc-200"} flex flex-row items-center pl-3 border-4 rounded-xl transition-all`}
+            >
+              <p className="text-zinc-600">$</p>
+              <input
+                className="outline-none p-3"
+                placeholder="0.00"
+                min={0}
+                max={100}
+                type="number"
+                value={disc}
+                onChange={(e) => {
+                  let value = e.target.value
+                  let valueNumber = Number(value)
+
+                  if (valueNumber > currentTotal) {
+                    value = currentTotal.toString()
+                    valueNumber = currentTotal
+                  }
+
+                  if (currentTotal > 0) {
+                    setPercentDisc(
+                      ((valueNumber * 100) / currentTotal).toString()
+                    )
+                  } else {
+                    setPercentDisc("")
+                  }
+                  setDisc(value)
+                }}
+              />
+            </div>
+          </div>
+        }
+
+        {configuration &&
+          <p className="font-bold text-lg">
+            TOTAL: $
+            {finalPrice.toFixed(2)}
+            USD
+            {" | "}
+            $
+            {(finalPrice * 25).toFixed(2)}
+            MXN
+          </p>
+        }
 
       </div>
 
