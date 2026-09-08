@@ -1,13 +1,14 @@
 "use client"
 import { Anesthesia } from "@/app/generated/prisma/client"
-import CreateAnesthesia from "@/components/catalogue/Anesthesia/CreateAnesthesia"
-import DeleteAnesthesia from "@/components/catalogue/Anesthesia/DeleteAnesthesia"
-import UpdateAnesthesia from "@/components/catalogue/Anesthesia/UpdateAnesthesia"
-import UpdateAnesthesiaStatus from "@/components/catalogue/Anesthesia/UpdateAnesthesiaStatus"
+import CreateAnesthesia from "@/components/configurationsCot/Anesthesia/CreateAnesthesia"
+import DeleteAnesthesia from "@/components/configurationsCot/Anesthesia/DeleteAnesthesia"
+import UpdateAnesthesia from "@/components/configurationsCot/Anesthesia/UpdateAnesthesia"
+import UpdateAnesthesiaStatus from "@/components/configurationsCot/Anesthesia/UpdateAnesthesiaStatus"
 import NavBarCatalogue from "@/components/catalogue/NavBarCatalogue"
 import axios from "axios"
 import { useEffect, useRef, useState } from "react"
 import toast from "react-hot-toast"
+import NavBarConfig from "@/components/configurationsCot/NavBarConfig"
 
 function page() {
   const loaded = useRef(false)
@@ -46,7 +47,7 @@ function page() {
 
   return (
     <div>
-      <NavBarCatalogue selected="Anestesia" />
+      <NavBarConfig selected="anestesias"/>
       <div className="flex flex-col gap-1 p-5">
         <h1 className="font-bold">Anestesias</h1>
         <button onClick={()=>setIsCreateAnesthesiaOpen(true)} className="underline cursor-pointer">Registrar</button>

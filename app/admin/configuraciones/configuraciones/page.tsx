@@ -1,12 +1,13 @@
 "use client"
-import DeleteConfigurationModal from "@/components/catalogue/Configuration/DeleteConfigurationModal"
-import UpdateStatusModal from "@/components/catalogue/Configuration/UpdateStatusModal"
+import DeleteConfigurationModal from "@/components/configurationsCot/Configuration/DeleteConfigurationModal"
+import UpdateStatusModal from "@/components/configurationsCot/Configuration/UpdateStatusModal"
 import NavBarCatalogue from "@/components/catalogue/NavBarCatalogue"
 import { ConfigurationInfo } from "@/lib/types"
 import axios from "axios"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
+import NavBarConfig from "@/components/configurationsCot/NavBarConfig"
 
 function page() {
   const router = useRouter()
@@ -61,12 +62,12 @@ function page() {
 
   return (
     <div>
-      <NavBarCatalogue selected="Configuraciones" />
+      <NavBarConfig selected="configuraciones"/>
       <div className="p-5 flex flex-col gap-1">
         <h1 className="font-bold">Configuraciones</h1> 
         <input placeholder="Búsqueda" value={search} onChange={(e)=>setSearch(e.target.value)}/>
         <label>{results.length} resultados</label>
-        <button onClick={()=>router.push("/admin/catalogo/configuraciones/nueva")} className="underline cursor-pointer">Registrar</button>
+        <button onClick={()=>router.push("/admin/configuraciones/configuraciones/nueva")} className="underline cursor-pointer">Registrar</button>
         <table>
           <thead>
             <tr>
@@ -94,7 +95,7 @@ function page() {
                   </button>
                 </td>
                 <td className="border-2 p-1">
-                  <button onClick={()=>router.push("/admin/catalogo/configuraciones/"+c.id)} className="underline cursor-pointer">Ver detalles</button>
+                  <button onClick={()=>router.push("/admin/configuraciones/configuraciones/"+c.id)} className="underline cursor-pointer">Ver detalles</button>
                 </td>
                 <td className="border-2 p-1">
                   <button onClick={()=>{setSelectedConfiguration(c); setIsDeleteOpen(true)}} className="underline cursor-pointer">Eliminar</button>

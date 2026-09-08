@@ -1,6 +1,7 @@
 "use client"
 import NavBarCatalogue from "@/components/catalogue/NavBarCatalogue"
-import DeleteRuleModal from "@/components/catalogue/Rules/DeleteRuleModal"
+import NavBarConfig from "@/components/configurationsCot/NavBarConfig"
+import DeleteRuleModal from "@/components/configurationsCot/Rules/DeleteRuleModal"
 import { RuleInfo, RuleTargetInfo } from "@/lib/types"
 import axios from "axios"
 import { useParams, useRouter } from "next/navigation"
@@ -44,7 +45,7 @@ function page() {
 
     return (
         <>
-            <NavBarCatalogue selected={"reglas"} />
+            <NavBarConfig selected="reglas"/>
             <div className="p-5 flex flex-col gap-1">
                 <h1 className="font-bold text-lg">Regla #{id}</h1>
                 {rule &&
@@ -78,7 +79,7 @@ function page() {
                         </table>
                     </div>
                 }
-                <button onClick={() => router.push("/admin/catalogo/reglas")} className="underline cursor-pointer">Regresar</button>
+                <button onClick={() => router.push("/admin/configuraciones/reglas")} className="underline cursor-pointer">Regresar</button>
                 <button onClick={()=>setIsDeleteOpen(true)} className="underline cursor-pointer">Eliminar</button>
             </div>
             {rule && <DeleteRuleModal open={isDeleteOpen} setOpen={setIsDeleteOpen} rule={rule} reload={reload}/>}

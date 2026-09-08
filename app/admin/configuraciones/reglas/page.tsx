@@ -1,6 +1,7 @@
 "use client"
 import NavBarCatalogue from "@/components/catalogue/NavBarCatalogue"
-import DeleteRuleModal from "@/components/catalogue/Rules/DeleteRuleModal"
+import NavBarConfig from "@/components/configurationsCot/NavBarConfig"
+import DeleteRuleModal from "@/components/configurationsCot/Rules/DeleteRuleModal"
 import { RuleInfo } from "@/lib/types"
 import axios from "axios"
 import { useRouter } from "next/navigation"
@@ -42,7 +43,7 @@ function page() {
 
     return (
         <>
-            <NavBarCatalogue selected={"reglas"} />
+            <NavBarConfig selected="reglas"/>
             <div className="p-5 flex flex-col gap-1">
                 <h1 className="font-bold">Reglas</h1>
                 <table>
@@ -70,7 +71,7 @@ function page() {
                                     {r.ruleTargets.length}
                                 </td>
                                 <td className="border p-1">
-                                    <button onClick={()=>router.push("/admin/catalogo/reglas/"+r.id)} className="underline cursor-pointer">Detalles</button>
+                                    <button onClick={()=>router.push("/admin/configuraciones/reglas/"+r.id)} className="underline cursor-pointer">Detalles</button>
                                     {" "}
                                     <button onClick={()=>{setSelectedRule(r);setIsDeleteRuleOpen(true)}} className="underline cursor-pointer">Eliminar</button>
                                 </td>
@@ -78,7 +79,7 @@ function page() {
                         ))}
                     </tbody>
                 </table>
-                <button onClick={() => router.push("/admin/catalogo/reglas/nueva")} className="underline cursor-pointer">Agregar</button>
+                <button onClick={() => router.push("/admin/configuraciones/reglas/nueva")} className="underline cursor-pointer">Agregar</button>
             </div>
             {selectedRule && <>
                 <DeleteRuleModal open={isDeleteRuleOpen} setOpen={setIsDeleteRuleOpen} rule={selectedRule} reload={fetchRules}/>

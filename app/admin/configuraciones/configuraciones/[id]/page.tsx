@@ -2,6 +2,7 @@
 
 import { Category, Configuration, ProductCategory } from "@/app/generated/prisma/client"
 import NavBarCatalogue from "@/components/catalogue/NavBarCatalogue"
+import NavBarConfig from "@/components/configurationsCot/NavBarConfig"
 import { ConfigurationCategoryInfo, ConfigurationCompleteInfo, ConfigurationInfo, ProductCategoryInfo } from "@/lib/types"
 import axios from "axios"
 import { useParams } from "next/navigation"
@@ -48,7 +49,7 @@ function page() {
 
     return (
         <>
-            <NavBarCatalogue selected="Configuraciones" />
+            <NavBarConfig selected="configuraciones"/>
             <div className="flex flex-col gap-1 p-5">
                 Información de configuración {configuration?.code}
                 <label className="font-bold">Código</label>
@@ -158,7 +159,7 @@ function page() {
                         </tr>
                     </tbody>
                 </table>
-                <button onClick={() => router.push("/admin/catalogo/configuraciones")} className="underline cursor-pointer">Regresar</button>
+                <button onClick={() => router.push("/admin/configuraciones/configuraciones")} className="underline cursor-pointer">Regresar</button>
             </div>
         </>
     )

@@ -1,10 +1,11 @@
 "use client"
 import { Stay } from "@/app/generated/prisma/client"
 import NavBarCatalogue from "@/components/catalogue/NavBarCatalogue"
-import CreateStay from "@/components/catalogue/Stays/CreateStay"
-import DeleteStay from "@/components/catalogue/Stays/DeleteStay"
-import UpdateStay from "@/components/catalogue/Stays/UpdateStay"
-import UpdateStayStatus from "@/components/catalogue/Stays/UpdateStayStatus"
+import NavBarConfig from "@/components/configurationsCot/NavBarConfig"
+import CreateStay from "@/components/configurationsCot/Stays/CreateStay"
+import DeleteStay from "@/components/configurationsCot/Stays/DeleteStay"
+import UpdateStay from "@/components/configurationsCot/Stays/UpdateStay"
+import UpdateStayStatus from "@/components/configurationsCot/Stays/UpdateStayStatus"
 import axios from "axios"
 import { useEffect, useRef, useState } from "react"
 import toast from "react-hot-toast"
@@ -48,7 +49,7 @@ function page() {
 
   return (
     <div>
-      <NavBarCatalogue selected="Estancia" />
+      <NavBarConfig selected="estancias"/>
       <div className="p-5 flex flex-col gap-1">
         <h1 className="font-bold">Tipos de estancias</h1>
         <button onClick={() => setIsCreateStayOpen(true)} className="underline cursor-pointer">Registrar</button>

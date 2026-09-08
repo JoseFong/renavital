@@ -1,10 +1,11 @@
 "use client"
 import { Procedure } from "@/app/generated/prisma/client"
 import NavBarCatalogue from "@/components/catalogue/NavBarCatalogue"
-import CreateProcedure from "@/components/catalogue/Procedure/CreateProcedure"
-import DeleteProcedure from "@/components/catalogue/Procedure/DeleteProcedure"
-import UpdateProcedure from "@/components/catalogue/Procedure/UpdateProcedure"
-import UpdateProcedureStatus from "@/components/catalogue/Procedure/UpdateProcedureStatus"
+import NavBarConfig from "@/components/configurationsCot/NavBarConfig"
+import CreateProcedure from "@/components/configurationsCot/Procedure/CreateProcedure"
+import DeleteProcedure from "@/components/configurationsCot/Procedure/DeleteProcedure"
+import UpdateProcedure from "@/components/configurationsCot/Procedure/UpdateProcedure"
+import UpdateProcedureStatus from "@/components/configurationsCot/Procedure/UpdateProcedureStatus"
 import axios from "axios"
 import { useEffect, useRef, useState } from "react"
 import toast from "react-hot-toast"
@@ -47,7 +48,7 @@ function page() {
 
   return (
     <div>
-      <NavBarCatalogue selected="Procedimientos" />
+      <NavBarConfig selected="procedimientos"/>
       <div className="flex flex-col gap-1 p-5">
         <h1 className="font-bold">Procedimientos</h1>
         <button onClick={()=>setIsCreateProcedureOpen(true)} className="underline cursor-pointer">Registrar</button>

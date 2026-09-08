@@ -1,6 +1,7 @@
 "use client"
 import { Category, Product } from "@/app/generated/prisma/client"
 import NavBarCatalogue from "@/components/catalogue/NavBarCatalogue"
+import NavBarConfig from "@/components/configurationsCot/NavBarConfig"
 import SelectSearch from "@/components/public/SelectSearch"
 import axios from "axios"
 import { useRouter } from "next/navigation"
@@ -123,7 +124,7 @@ function page() {
 
     return (
         <>
-            <NavBarCatalogue selected={"reglas"} />
+            <NavBarConfig selected="reglas"/>
             <div className="flex flex-col gap-1 p-5">
                 <h1 className="font-bold">Agregar nueva regla</h1>
                 <label>Tipo de disparador</label>
@@ -192,7 +193,7 @@ function page() {
                     }
                 </div>
                 <button onClick={fetchCreate} className="underline cursor-pointer">Registrar regla</button>
-                <button onClick={()=>router.push("/admin/catalogo/reglas")} className="underline cursor-pointer">Regresar</button>
+                <button onClick={()=>router.push("/admin/configuraciones/reglas")} className="underline cursor-pointer">Regresar</button>
             </div>
         </>
     )

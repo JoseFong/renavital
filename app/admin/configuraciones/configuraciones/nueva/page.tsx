@@ -1,6 +1,7 @@
 "use client"
 import { Anesthesia, Category, Procedure, Stay } from "@/app/generated/prisma/client"
 import NavBarCatalogue from "@/components/catalogue/NavBarCatalogue"
+import NavBarConfig from "@/components/configurationsCot/NavBarConfig"
 import axios from "axios"
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
@@ -143,7 +144,7 @@ function page() {
 
     return (
         <>
-            <NavBarCatalogue selected="Configuraciones" />
+            <NavBarConfig selected="configuraciones"/>
             <div className="flex flex-col gap-1 p-5">
                 <h1 className="font-bold">Nueva configuración</h1>
                 <div className="flex flex-row gap-10">
