@@ -19,18 +19,18 @@ model Product {
   price         Decimal @db.Decimal(10, 2)
   active        Boolean
   service       Boolean
-  productTypeId Int?
+  productClassificationId Int?
 
-  productType       ProductType?      @relation(fields: [productTypeId], references: [id])
+  productClassification ProductClassification? @relation(fields: [productClassificationId],references: [id])
   productCategories ProductCategory[]
   ruleTargets       RuleTarget[]
   rules             Rule[]
 }
 
-model ProductType {
-  id     Int     @id @default(autoincrement())
-  name   String  @unique
-  active Boolean
+model ProductClassification {
+  id Int @id @default(autoincrement())
+  name String
+  parentId Int?
 
   products Product[]
 }

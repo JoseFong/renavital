@@ -5,29 +5,31 @@ import Image from "next/image"
 import question from "@/assets/icons8-help-50.png"
 import toast from "react-hot-toast"
 import axios from "axios"
-import { Category, ProductType } from "@/app/generated/prisma/client"
 import { useParams, useRouter } from "next/navigation"
-import { ProductWithType } from "@/lib/types"
+import { ProductClassification } from "@/app/generated/prisma/client"
+import SelectClassification from "@/components/catalogue/Products/SelectClassification"
+import { ProductInfo } from "@/lib/types"
 
 function page() {
     const params = useParams()
     const id = params.id
+    const idNum = Number(id)
 
     const loaded = useRef(false)
 
     const router = useRouter()
 
-    const [product,setProduct] = useState<ProductWithType|null>(null)
-
+    const [product,setProduct] = useState<ProductInfo>()
     const [name, setName] = useState("")
     const [equipment, setEquipment] = useState(false)
-    const [productTypeId, setProductTypeId] = useState("-1")
     const [price, setPrice] = useState("0")
     const [service, setService] = useState(false)
+    const [selectedClassification,setSelectedClassification] = useState<ProductClassification|null>(null)
 
-    const [productTypes, setProductTypes] = useState<ProductType[]>([])
+    const [classifications,setClassifications] = useState<ProductClassification[]>([])
 
-    const [loadingProductTypes, setLoadingProductTypes] = useState(true)
+    const [isSelectClassificationOpen,setIsSelectClassificationOpen] = useState(false)
+
     const [loading, setLoading] = useState(false)
 
     function modifyPrice(n: number) {
@@ -35,14 +37,11 @@ function page() {
         setPrice(aux.toString())
     }
 
-    async function fetchProductTypes() {
+    async function fetchClassifications() {
         try {
-            setLoadingProductTypes(true)
-            const response = await axios.get("/api/productTypes")
-            setProductTypes(response.data)
-            setLoadingProductTypes(false)
+            const response = await axios.get("/api/productClassifications")
+            setClassifications(response.data)
         } catch (e: any) {
-            setLoadingProductTypes(false)
             if (e.response && e.response.data && e.response.data.message) {
                 toast.error(e.response.data.message)
             } else {
@@ -65,20 +64,20 @@ function page() {
     }
 
     function reset(){
-      if(product){
-        setName(product.name)
-        setPrice(product.price.toString())
-        setProductTypeId(product.productTypeId.toString())
-        setEquipment(product.equipment)
-        setService(product.service)
-      }
+        if(product){
+            setName(product.name)
+            setEquipment(product.equipment)
+            setService(product.service)
+            setPrice(product.price.toString())
+            setSelectedClassification(classifications.find((c)=>c.id===product.productClassificationId) ?? null)
+        }
     }
 
     useEffect(()=>{
-      if(product && productTypes){
-        reset()
-      }
-    },[product,productTypes])
+        if(product){
+            reset()
+        }
+    },[product])
 
     async function fetchUpdate() {
         try {
@@ -92,18 +91,21 @@ function page() {
          
             if(equipment && !service) throw new Error("Un item marcado como 'Equipo' no puede ser considerado un producto.")
 
+            let productClassificationId = null
+            if(selectedClassification) productClassificationId = selectedClassification.id
+
             const data = {
                 name: name.trim(),
                 equipment: equipment,
                 service: service,
                 price: Number(price),
-                productTypeId: Number(productTypeId)
+                productClassificationId
             }
 
-            await axios.patch("/api/products/"+id,data)
+            await axios.patch("/api/products/"+product?.id,data)
 
             setLoading(false)
-            toast.success("Producto editado exitosamente.")
+            toast.success("Producto actualizado exitosamente.")
             router.push("/admin/catalogo/productos")
         } catch (e: any) {
             setLoading(false)
@@ -115,31 +117,24 @@ function page() {
         }
     }
 
-    useEffect(() => {
-        if(loaded.current) return
-        fetchProductTypes()
-        fetchProduct()
-        loaded.current = true
-    }, [])
-
     function goBack() {
         router.push("/admin/catalogo/productos")
     }
+
+    useEffect(()=>{
+        if(loaded.current) return
+        fetchClassifications()
+        fetchProduct()
+        loaded.current=true
+    },[])
 
     return (
         <>
             <NavBarCatalogue selected="Productos" />
             <div className="p-5 flex flex-col gap-1">
-                <h1 className="font-bold">Actualizar información de producto</h1>
+                <h1 className="font-bold">Actualizar información de producto '{product?.name}'</h1>
                 <label>Nombre</label>
                 <input placeholder="Ej. SERVICIO DE GESTION CLINICA INTEGRAL - NOM-004-SSA3" value={name} onChange={(e) => setName(e.target.value.toUpperCase())} />
-                <label>Tipo de producto (opcional)</label>
-                <select disabled={loadingProductTypes} value={productTypeId} onChange={(e) => setProductTypeId(e.target.value)}>
-                    <option value={"-1"}>Seleccionar tipo de producto</option>
-                    {productTypes.map((p:ProductType) => (
-                        <option key={p.id} value={p.id}>{p.name}</option>
-                    ))}
-                </select>
                 <label>Precio unitario (USD)</label>
                 <div className="flex flex-row gap-1">
                     <button onClick={() => modifyPrice(1)} className="p-2 shadow-md rounded-sm cursor-pointer">+</button>
@@ -158,9 +153,14 @@ function page() {
                     <Image src={question} alt="Información" />
                     <p>Al marcar esta opción será considerado servicio y no producto.</p>
                 </div>
+                <label>Clasificación (opcional)</label>
+                <button disabled={loading} onClick={()=>setIsSelectClassificationOpen(true)} className="underline cursor-pointer">
+                    {selectedClassification ? selectedClassification.name : "PRESIONE PARA SELECCIONAR"}
+                </button>
                 <button onClick={fetchUpdate} disabled={loading} className="underline cursor-pointer">Aceptar</button>
                 <button onClick={goBack} disabled={loading} className="underline cursor-pointer">Regresar</button>
             </div>
+            <SelectClassification open={isSelectClassificationOpen} setOpen={setIsSelectClassificationOpen} classifications={classifications} setSelectedClassification={setSelectedClassification}/>
         </>
     )
 }

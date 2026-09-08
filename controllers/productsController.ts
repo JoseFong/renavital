@@ -1,5 +1,4 @@
 import prisma from "@/lib/prisma";
-import { exit } from "process";
 
 /**
  * 
@@ -8,16 +7,16 @@ import { exit } from "process";
 export async function getAllProducts() {
     const products = await prisma.product.findMany({
         include: {
-            productType: true,
-            productCategories: true
+            productCategories: {
+                include: {
+                    category: true
+                }
+            },
+            productClassification: true
         }
     })
 
-    const sorted = products.sort((a, b) =>
-        (a.productType?.name ?? "").localeCompare(b.productType?.name ?? "")
-    )
-
-    return sorted
+    return products
 }
 
 /**
@@ -75,17 +74,7 @@ export async function createProduct(data: any) {
     let exists
 
     console.log(data)
-
-    //validar que el tipo de producto exist
-    if(data.productTypeId!==-1){
-        exists = await prisma.productType.findFirst({
-            where: {
-                id: data.productTypeId
-            }
-        })
-        if(!exists) throw new Error("No se encontró el tipo de producto.")
-    }
-
+    
     //validar que no exista otro producto con ese mismo nombre
     exists = await prisma.product.findFirst({
         where: {
@@ -94,10 +83,14 @@ export async function createProduct(data: any) {
     })
     if (exists) throw new Error("Ya existe otro producto con ese nombre.")
 
-    //asignar nueva id de tipo de producto
-    let productTypeId = null
-    if(data.productTypeId!==-1)
-        productTypeId = data.productTypeId
+    if(data.productClassificationId){
+        exists = await prisma.productClassification.findFirst({
+            where: {
+                id: data.productClassificationId
+            }
+        })
+        if(!exists) throw new Error("No se encontró la clasificación.")
+    }
 
     //crear producto
     await prisma.product.create({
@@ -107,7 +100,7 @@ export async function createProduct(data: any) {
             service: data.service,
             price: data.price,
             active: true,
-            productTypeId: productTypeId
+            productClassificationId: data.productClassificationId
         }
     })
 }
@@ -144,21 +137,15 @@ export async function updateProduct(id: number, data: any) {
         }
     })
     if (!exists) throw new Error("No se encontró el producto.")
-
-    //validar que el tipo de producto exist
-    if(data.productTypeId!==-1){
-        exists = await prisma.productType.findFirst({
+    
+    if(data.productClassificationId){
+        exists = await prisma.productClassification.findFirst({
             where: {
-                id: data.productTypeId
+                id: data.productClassificationId
             }
         })
-        if(!exists) throw new Error("No se encontró el tipo de producto.")
+        if(!exists) throw new Error("No se encontró la clasificación del producto.")
     }
-    
-    //asignar nueva id de tipo de producto
-    let productTypeId = null
-    if(data.productTypeId!==-1)
-        productTypeId = data.productTypeId
 
     //actualizar producto
     await prisma.product.update({
@@ -167,10 +154,10 @@ export async function updateProduct(id: number, data: any) {
         },
         data: {
             name: data.name,
-            productTypeId: productTypeId,
             equipment: data.equipment,
             price: data.price,
-            service: data.service
+            service: data.service,
+            productClassificationId: data.productClassificationId
         }
     })
 }
@@ -221,6 +208,14 @@ export async function getInactiveProducts(){
     return await prisma.product.findMany({
         where: {
             active: false
+        }
+    })
+}
+
+export async function unassignAllProductTypes(){
+    await prisma.product.updateMany({
+        data: {
+            productTypeId: null
         }
     })
 }

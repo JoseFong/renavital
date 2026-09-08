@@ -1,15 +1,17 @@
-import { Anesthesia, Category, Configuration, ConfigurationCategories, Procedure, Product, ProductCategory, ProductType, RuleTarget, Stay } from "@/app/generated/prisma/client"
+import { Anesthesia, Category, Configuration, ConfigurationCategories, Procedure, Product, ProductCategory, ProductClassification, RuleTarget, Stay } from "@/app/generated/prisma/client"
 import { Decimal } from "@prisma/client/runtime/client"
 
-export type ProductWithType = {
+export type ProductInfo = {
     id: number,
     name: string,
     equipment: boolean,
-    productTypeId: number,
+    service: boolean,
     price: Decimal,
     active: boolean,
-    service: boolean,
-    productType: ProductType
+    productClassificationId: number
+
+    productCategories: ProductCategoryInfo[]
+    productClassification: ProductClassification
 }
 
 export type IdQuantity = {
@@ -17,39 +19,16 @@ export type IdQuantity = {
     quantity: number
 }
 
-export type ProductWithCategories = {
-    id: number,
-    active: boolean,
-    equipment: boolean,
-    service: boolean,
-    productTypeId: number,
-    name: string,
-    price: Decimal,
-    productCategories: ProductCategory[]
-}
-
 export type ConfigurationInfo = {
-    id:number,
-    code:string,
-    procedureId:number,
-    anesthesiaId:number,
-    stayId:number,
+    id: number,
+    code: string,
+    procedureId: number,
+    anesthesiaId: number,
+    stayId: number,
     active: boolean,
     procedure: Procedure,
     anesthesia: Anesthesia,
     stay: Stay
-}
-
-export type ProductWithTypeAndCategories = {
-    id: number,
-    name: string,
-    equipment: boolean,
-    productTypeId: number,
-    price: Decimal,
-    active: boolean,
-    service: boolean,
-    productType: ProductType,
-    productCategories: ProductCategory[]
 }
 
 export type RuleTargetInfo = {
@@ -64,11 +43,11 @@ export type RuleInfo = {
     id: number,
     triggerType: string,
     type: string,
-    productSourceId: number|null,
-    categorySourceId: number|null,
+    productSourceId: number | null,
+    categorySourceId: number | null,
     ruleTargets: RuleTargetInfo[],
-    productSource: Product|null,
-    categorySource: Category|null
+    productSource: Product | null,
+    categorySource: Category | null
 }
 
 
@@ -107,5 +86,7 @@ export type ProductCategoryInfo = {
     id: number,
     productId: number,
     product: Product,
-    quantity: number
+    quantity: number,
+    category: Category,
+    categoryId: number
 }

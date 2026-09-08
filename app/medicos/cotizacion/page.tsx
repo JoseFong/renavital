@@ -12,7 +12,8 @@ import Loading from "@/components/public/Loading"
 import {
   ConfigurationCategoryInfo,
   ConfigurationCompleteInfo,
-  ProductCategoryInfo
+  ProductCategoryInfo,
+  RuleInfo
 } from "@/lib/types"
 import axios from "axios"
 import { useEffect, useRef, useState } from "react"
@@ -26,6 +27,7 @@ function page() {
   const [anesthesias, setAnesthesias] = useState<Anesthesia[]>([])
   const [stays, setStays] = useState<Stay[]>([])
   const [configurations, setConfigurations] = useState<Configuration[]>([])
+  const [rules,setRules] = useState<RuleInfo[]>([])
 
   const [configuration, setConfiguration] = useState<ConfigurationCompleteInfo | null>(null)
 
@@ -45,47 +47,20 @@ function page() {
   // OBTENCION DE INFORMACION
   ////////////
 
-  async function fetchProcedures() {
-    try {
-      const response = await axios.get("/api/procedures?active=true")
-      setProcedures(response.data)
-    } catch (e: any) {
-      toast.error(
-        e.response?.data?.message ?? e.message
-      )
-    }
-  }
-
-  async function fetchAnesthesias() {
-    try {
-      const response = await axios.get("/api/anesthesias?active=true")
-      setAnesthesias(response.data)
-    } catch (e: any) {
-      toast.error(
-        e.response?.data?.message ?? e.message
-      )
-    }
-  }
-
-  async function fetchStays() {
-    try {
-      const response = await axios.get("/api/stays?active=true")
-      setStays(response.data)
-    } catch (e: any) {
-      toast.error(
-        e.response?.data?.message ?? e.message
-      )
-    }
-  }
-
-  async function fetchConfigurations() {
-    try {
-      const response = await axios.get("/api/configurations")
-      setConfigurations(response.data)
-    } catch (e: any) {
-      toast.error(
-        e.response?.data?.message ?? e.message
-      )
+  async function fetchInformation(){
+    try{
+      const response = await axios.get("/api/quoter")
+      setProcedures(response.data.procedures)
+      setAnesthesias(response.data.anesthesias)
+      setStays(response.data.stays)
+      setConfigurations(response.data.configurations)
+      setRules(response.data.rules)
+    }catch(e:any){
+      if(e.response && e.response.data && e.response.data.message){
+        toast.error(e.response.data.message)
+      }else{
+        toast.error(e.message)
+      }
     }
   }
 
@@ -96,10 +71,7 @@ function page() {
   useEffect(() => {
     if (loaded.current) return
 
-    fetchProcedures()
-    fetchAnesthesias()
-    fetchStays()
-    fetchConfigurations()
+    fetchInformation()
 
     loaded.current = true
   }, [])
@@ -417,6 +389,7 @@ function page() {
     )
 
   }, [currentTotal])
+
 
   /////////////
   // RETURN
@@ -846,7 +819,6 @@ function page() {
             MXN
           </p>
         }
-
       </div>
 
       <Loading open={isLoadingOpen} />

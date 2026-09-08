@@ -5,8 +5,9 @@ import Image from "next/image"
 import question from "@/assets/icons8-help-50.png"
 import toast from "react-hot-toast"
 import axios from "axios"
-import { Category, ProductType } from "@/app/generated/prisma/client"
 import { useRouter } from "next/navigation"
+import { ProductClassification } from "@/app/generated/prisma/client"
+import SelectClassification from "@/components/catalogue/Products/SelectClassification"
 
 function page() {
     const loaded = useRef(false)
@@ -15,13 +16,14 @@ function page() {
 
     const [name, setName] = useState("")
     const [equipment, setEquipment] = useState(false)
-    const [productTypeId, setProductTypeId] = useState("-1")
     const [price, setPrice] = useState("0")
     const [service, setService] = useState(false)
+    const [selectedClassification,setSelectedClassification] = useState<ProductClassification|null>(null)
 
-    const [productTypes, setProductTypes] = useState<ProductType[]>([])
+    const [classifications,setClassifications] = useState<ProductClassification[]>([])
 
-    const [loadingProductTypes, setLoadingProductTypes] = useState(true)
+    const [isSelectClassificationOpen,setIsSelectClassificationOpen] = useState(false)
+
     const [loading, setLoading] = useState(false)
 
     function modifyPrice(n: number) {
@@ -29,14 +31,11 @@ function page() {
         setPrice(aux.toString())
     }
 
-    async function fetchProductTypes() {
+    async function fetchClassifications() {
         try {
-            setLoadingProductTypes(true)
-            const response = await axios.get("/api/productTypes")
-            setProductTypes(response.data)
-            setLoadingProductTypes(false)
+            const response = await axios.get("/api/productClassifications")
+            setClassifications(response.data)
         } catch (e: any) {
-            setLoadingProductTypes(false)
             if (e.response && e.response.data && e.response.data.message) {
                 toast.error(e.response.data.message)
             } else {
@@ -57,12 +56,15 @@ function page() {
          
             if(equipment && !service) throw new Error("Un item marcado como 'Equipo' no puede ser considerado un producto.")
 
+            let productClassificationId = null
+            if(selectedClassification) productClassificationId = selectedClassification.id
+
             const data = {
                 name: name.trim(),
                 equipment: equipment,
                 service: service,
                 price: Number(price),
-                productTypeId: Number(productTypeId)
+                productClassificationId
             }
 
             await axios.post("/api/products",data)
@@ -80,15 +82,15 @@ function page() {
         }
     }
 
-    useEffect(() => {
-        if(loaded.current) return
-        fetchProductTypes()
-        loaded.current = true
-    }, [])
-
     function goBack() {
         router.push("/admin/catalogo/productos")
     }
+
+    useEffect(()=>{
+        if(loaded.current) return
+        fetchClassifications()
+        loaded.current=true
+    },[])
 
     return (
         <>
@@ -97,13 +99,6 @@ function page() {
                 <h1 className="font-bold">Registrar nuevo producto</h1>
                 <label>Nombre</label>
                 <input placeholder="Ej. SERVICIO DE GESTION CLINICA INTEGRAL - NOM-004-SSA3" value={name} onChange={(e) => setName(e.target.value.toUpperCase())} />
-                <label>Tipo de producto (opcional)</label>
-                <select disabled={loadingProductTypes} onChange={(e) => setProductTypeId(e.target.value)}>
-                    <option value={"-1"}>Seleccionar tipo de producto</option>
-                    {productTypes.map((p:ProductType) => (
-                        <option key={p.id} value={p.id}>{p.name}</option>
-                    ))}
-                </select>
                 <label>Precio unitario (USD)</label>
                 <div className="flex flex-row gap-1">
                     <button onClick={() => modifyPrice(1)} className="p-2 shadow-md rounded-sm cursor-pointer">+</button>
@@ -122,9 +117,14 @@ function page() {
                     <Image src={question} alt="Información" />
                     <p>Al marcar esta opción será considerado servicio y no producto.</p>
                 </div>
+                <label>Clasificación (opcional)</label>
+                <button disabled={loading} onClick={()=>setIsSelectClassificationOpen(true)} className="underline cursor-pointer">
+                    {selectedClassification ? selectedClassification.name : "PRESIONE PARA SELECCIONAR"}
+                </button>
                 <button onClick={fetchCreate} disabled={loading} className="underline cursor-pointer">Aceptar</button>
                 <button onClick={goBack} disabled={loading} className="underline cursor-pointer">Regresar</button>
             </div>
+            <SelectClassification open={isSelectClassificationOpen} setOpen={setIsSelectClassificationOpen} classifications={classifications} setSelectedClassification={setSelectedClassification}/>
         </>
     )
 }
