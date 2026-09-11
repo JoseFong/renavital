@@ -1,0 +1,92 @@
+[
+  {
+    "emoji": "🇲🇽",
+    "code": "+52",
+    "name": "México"
+  },
+  {
+    "emoji": "🇺🇸",
+    "code": "+1",
+    "name": "Estados Unidos"
+  },
+  {
+    "emoji": "🇨🇦",
+    "code": "+1",
+    "name": "Canadá"
+  },
+  {
+    "emoji": "🇬🇹",
+    "code": "+502",
+    "name": "Guatemala"
+  },
+  {
+    "emoji": "🇧🇿",
+    "code": "+501",
+    "name": "Belice"
+  },
+  {
+    "emoji": "🇸🇻",
+    "code": "+503",
+    "name": "El Salvador"
+  },
+  {
+    "emoji": "🇭🇳",
+    "code": "+504",
+    "name": "Honduras"
+  },
+  {
+    "emoji": "🇳🇮",
+    "code": "+505",
+    "name": "Nicaragua"
+  },
+  {
+    "emoji": "🇨🇷",
+    "code": "+506",
+    "name": "Costa Rica"
+  },
+  {
+    "emoji": "🇵🇦",
+    "code": "+507",
+    "name": "Panamá"
+  },
+  {
+    "emoji": "🇨🇴",
+    "code": "+57",
+    "name": "Colombia"
+  },
+  {
+    "emoji": "🇻🇪",
+    "code": "+58",
+    "name": "Venezuela"
+  },
+  {
+    "emoji": "🇪🇨",
+    "code": "+593",
+    "name": "Ecuador"
+  },
+  {
+    "emoji": "🇵🇪",
+    "code": "+51",
+    "name": "Perú"
+  },
+  {
+    "emoji": "🇧🇷",
+    "code": "+55",
+    "name": "Brasil"
+  },
+  {
+    "emoji": "🇦🇷",
+    "code": "+54",
+    "name": "Argentina"
+  },
+  {
+    "emoji": "🇨🇱",
+    "code": "+56",
+    "name": "Chile"
+  },
+  {
+    "emoji": "🇪🇸",
+    "code": "+34",
+    "name": "España"
+  }
+]

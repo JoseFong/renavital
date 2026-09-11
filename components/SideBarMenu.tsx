@@ -63,6 +63,10 @@ const menu = [
             {
                 name: "Pacientes",
                 path: "/admin/personas/pacientes"
+            },
+            {
+                name: "Especialidades",
+                path: "/admin/personas/especialidades"
             }
         ]
     },

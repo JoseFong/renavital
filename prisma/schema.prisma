@@ -13,23 +13,23 @@ datasource db {
 }
 
 model Product {
-  id            Int     @id @default(autoincrement())
-  name          String
-  equipment     Boolean
-  price         Decimal @db.Decimal(10, 2)
-  active        Boolean
-  service       Boolean
+  id                      Int     @id @default(autoincrement())
+  name                    String
+  equipment               Boolean
+  price                   Decimal @db.Decimal(10, 2)
+  active                  Boolean
+  service                 Boolean
   productClassificationId Int?
 
-  productClassification ProductClassification? @relation(fields: [productClassificationId],references: [id])
-  productCategories ProductCategory[]
-  ruleTargets       RuleTarget[]
-  rules             Rule[]
+  productClassification ProductClassification? @relation(fields: [productClassificationId], references: [id])
+  productCategories     ProductCategory[]
+  ruleTargets           RuleTarget[]
+  rules                 Rule[]
 }
 
 model ProductClassification {
-  id Int @id @default(autoincrement())
-  name String
+  id       Int    @id @default(autoincrement())
+  name     String
   parentId Int?
 
   products Product[]
@@ -132,4 +132,82 @@ model RuleTarget {
 
   rule    Rule    @relation(fields: [ruleId], references: [id], onDelete: Cascade)
   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+model Patient {
+  id Int @id @default(autoincrement())
+
+  firstName      String
+  lastName       String
+  secondLastName String?
+
+  birthday     String
+  registeredAt String
+
+  gender  String
+  country String
+  state   String
+  city    String
+  address String?
+
+  curp           String?
+  email          String?
+  countryCode    String
+  phone          String
+  secondaryPhone String?
+
+  observations String?
+
+  bloodType  String?
+  profession String?
+  civilState String?
+  language   String?
+}
+
+model Specialty {
+  id Int @id @default(autoincrement())
+  name String
+
+  doctorSpecialties DoctorSpecialty[]
+}
+
+model Doctor {
+  id Int @id @default(autoincrement())
+  firstName String
+  lastName String
+  secondLastName String?
+
+  gender String
+  curp String? @unique
+  rfc String? @unique
+
+  email String? @unique
+  countryCode String
+  phone String @unique
+  secondaryPhone String?
+
+  country String
+  state String
+  city String
+  address String?
+
+  university String
+  licenseNumber String  
+
+  observations String?
+
+  defaultExchangeRate Float
+
+  registeredAt String
+
+  doctorSpecialties DoctorSpecialty[]
+}
+
+model DoctorSpecialty {
+  id Int @id @default(autoincrement())
+  specialtyId Int
+  doctorId Int
+
+  specialty Specialty @relation(fields: [specialtyId],references: [id],onDelete: Cascade)
+  doctor Doctor @relation(fields: [doctorId],references: [id],onDelete: Cascade)
 }
