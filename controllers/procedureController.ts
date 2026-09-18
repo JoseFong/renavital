@@ -31,12 +31,20 @@ export async function createProcedure(data:any){
     })
     if(exists) throw new Error("Ya existe otro tipo de procedimiento con ese mismo código.")
 
+    exists = await prisma.procedure.findFirst({
+        where: {
+            shortForm: data.shortForm
+        }
+    })
+    if(exists) throw new Error("Ya existe otro tipo de procedimiento con esa abreviación.")
+
     //creacion de procedimiento
     await prisma.procedure.create({
         data: {
             name: data.name,
             code: data.code,
-            active: true
+            active: true,
+            shortForm: data.shortForm
         }
     })
 }
@@ -71,6 +79,13 @@ export async function updateProcedure(id:number,data:any){
     })
     if(exists && exists.id!==id) throw new Error("Ya existe otro tipo de procedimiento con ese mismo código.")
 
+    exists = await prisma.procedure.findFirst({
+        where: {
+            shortForm: data.shortForm
+        }
+    })
+    if(exists && exists.id!==id) throw new Error("Ya existe otro tipo de procedimiento con esa abreviación.")
+
     //creacion de procedimiento
     await prisma.procedure.update({
         where: {
@@ -78,7 +93,8 @@ export async function updateProcedure(id:number,data:any){
         },
         data: {
             name: data.name,
-            code: data.code
+            code: data.code,
+            shortForm: data.shortForm
         }
     })
 }

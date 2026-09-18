@@ -31,11 +31,19 @@ export async function createAnesthesia(data:any){
     })
     if(exists) throw new Error("Ya existe otro tipo de anestesia con ese mismo código.")
 
+    exists = await prisma.anesthesia.findFirst({
+        where: {
+            shortForm: data.shortForm
+        }
+    })
+    if(exists) throw new Error("Ya existe un tipo de anestesia con esa abreviación.")
+
     await prisma.anesthesia.create({
         data: {
             name: data.name,
             code: data.code,
-            active: true
+            active: true,
+            shortForm: data.shortForm
         }
     })
 }
@@ -82,6 +90,13 @@ export async function updateAnesthesia(id:number,data:any){
     })
     if(exists && exists.id!==id) throw new Error("Ya existe otro tipo de anestesia con ese mismo código.")
 
+    exists = await prisma.anesthesia.findFirst({
+        where: {
+            shortForm: data.shortForm
+        }
+    })
+    if(exists && exists.id!==id) throw new Error("Ya existe un tipo de anestesia con esa abreviación.")
+
     //actualizar anestesia
     await prisma.anesthesia.update({
         where: {
@@ -89,7 +104,8 @@ export async function updateAnesthesia(id:number,data:any){
         },
         data: {
             name: data.name,
-            code: data.code
+            code: data.code,
+            shortForm: data.shortForm
         }
     })
 }

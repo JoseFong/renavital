@@ -1,4 +1,4 @@
-import { Anesthesia, Category, Configuration, ConfigurationCategories, Procedure, Product, ProductCategory, ProductClassification, RuleTarget, Stay } from "@/app/generated/prisma/client"
+import { Anesthesia, Category, Configuration, ConfigurationCategories, Doctor, Procedure, Product, ProductCategory, ProductClassification, RuleTarget, Specialty, Stay } from "@/app/generated/prisma/client"
 import { Decimal } from "@prisma/client/runtime/client"
 
 export type ProductInfo = {
@@ -89,4 +89,61 @@ export type ProductCategoryInfo = {
     quantity: number,
     category: Category,
     categoryId: number
+}
+
+//TIPOS PARA DOCTOR Y ESPECIALIDAD
+
+export type DoctorSpecialtyInfo = {
+    id: number,
+    doctorId: number,
+    specialtyId: number,
+    doctor: Doctor,
+    specialty: Specialty
+}
+
+export type SpecialtyInfo = {
+    id: number,
+    name: string,
+    doctorSpecialties: DoctorSpecialtyInfo[]
+}
+
+export type DoctorInfo = {
+    id: number,
+
+    firstName: string,
+    lastName: string,
+    secondLastName: string | null,
+
+    curp: string | null,
+    rfc: string | null,
+    gender: string,
+
+    email: string | null,
+    countryCode: string,
+    phone: string,
+    secondaryPhone: string | null,
+
+    country: string,
+    state: string,
+    city: string,
+    address: string | null,
+
+    university: string,
+    licenseNumber: string,
+
+    observations: string | null,
+
+    defaultExchangeRate: number,
+
+    registeredAt: string,
+
+    doctorSpecialties: DoctorSpecialtyInfo[]
+}
+
+export type ExchangeRateInfo = {
+    id: number,
+    exchangeRate: number,
+    doctorId: number,
+    configurationId: number,
+    configuration: ConfigurationInfo
 }

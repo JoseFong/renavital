@@ -57,6 +57,7 @@ function page() {
               <th className="border-2 p-1">Id</th>
               <th className="border-2 p-1">Código</th>
               <th className="border-2 p-1">Nombre</th>
+              <th className="border-2 p-1">Abreviación</th>
               <th className="border-2 p-1">Estado</th>
               <th className="border-2 p-1">Acciones</th>
             </tr>
@@ -67,6 +68,7 @@ function page() {
                 <td className="border-2 p-1">{a.id}</td>
                 <td className="border-2 p-1">{a.code}</td>
                 <td className="border-2 p-1">{a.name}</td>
+                <td className="border-2 p-1">{a.shortForm}</td>
                 <td className="border-2 p-1">
                   <button onClick={()=>{setSelectedAnesthesia(a); setIsUpdateAnesthesiaStatusOpen(true)}} className="underline cursor-pointer">
                     {a.active ? "Activo" : "Inactivo"}

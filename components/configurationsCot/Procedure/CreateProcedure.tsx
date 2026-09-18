@@ -7,6 +7,7 @@ import toast from "react-hot-toast"
 function CreateProcedure({ open, setOpen, reload }: { open: any, setOpen: any, reload: () => void }) {
     const [code, setCode] = useState("")
     const [name, setName] = useState("")
+    const [shortForm,setShortForm] = useState("")
 
     const [loading, setLoading] = useState(false)
 
@@ -19,11 +20,12 @@ function CreateProcedure({ open, setOpen, reload }: { open: any, setOpen: any, r
         try {
             setLoading(true)
 
-            if(code.trim()==="" || name.trim()==="") throw new Error("Complete todos los campos.")
+            if(code.trim()==="" || name.trim()==="" || shortForm.trim()==="") throw new Error("Complete todos los campos.")
             
             const data = {
                 code: code.trim(),
-                name: name.trim()
+                name: name.trim(),
+                shortForm: shortForm.trim()
             }
 
             await axios.post("/api/procedures",data)
@@ -50,6 +52,8 @@ function CreateProcedure({ open, setOpen, reload }: { open: any, setOpen: any, r
                 <input value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} placeholder="Ej. CMA" />
                 <label>Nombre</label>
                 <input value={name} onChange={(e) => setName(e.target.value.toUpperCase())} placeholder="Ej. CIRUGIA MAYOR"/>
+                <label>Abreviación</label>
+                <input value={shortForm} onChange={(e)=>setShortForm(e.target.value.toUpperCase())} placeholder="Ej. CIR. MAYOR"/>
                 <button disabled={loading} onClick={fetchCreate} className="underline cursor-pointer">Aceptar</button>
                 <button disabled={loading} onClick={() => setOpen(false)} className="underline cursor-pointer">Cancelar</button>
             </div>

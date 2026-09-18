@@ -8,6 +8,7 @@ import toast from "react-hot-toast"
 function UpdateAnesthesia({ open, setOpen, reload, an }: { open: any, an: Anesthesia, setOpen: any, reload: () => void }) {
     const [code, setCode] = useState("")
     const [name, setName] = useState("")
+    const [shortForm,setShortForm] = useState("")
 
     const [loading, setLoading] = useState(false)
 
@@ -15,6 +16,7 @@ function UpdateAnesthesia({ open, setOpen, reload, an }: { open: any, an: Anesth
         if (an) {
             setCode(an.code)
             setName(an.name)
+            setShortForm(an.shortForm)
         }
     }
 
@@ -28,11 +30,12 @@ function UpdateAnesthesia({ open, setOpen, reload, an }: { open: any, an: Anesth
         try {
             setLoading(true)
 
-            if (code.trim() === "" || name.trim() === "") throw new Error("Complete todos los campos.")
+            if (code.trim() === "" || name.trim() === "" || shortForm.trim()==="") throw new Error("Complete todos los campos.")
 
             const data = {
                 code: code.trim(),
-                name: name.trim()
+                name: name.trim(),
+                shortForm: shortForm.trim()
             }
 
             await axios.patch("/api/anesthesias/"+an.id, data)
@@ -58,6 +61,8 @@ function UpdateAnesthesia({ open, setOpen, reload, an }: { open: any, an: Anesth
                 <input value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} placeholder="Ej. AG" />
                 <label>Nombre</label>
                 <input value={name} onChange={(e) => setName(e.target.value.toUpperCase())} placeholder="Ej. Anestesia General" />
+                <label>Abreviación</label>
+                <input value={shortForm} onChange={(e) => setShortForm(e.target.value.toUpperCase())} placeholder="Ej. AN. GENERAL"/>
                 <button disabled={loading} onClick={fetchUpdate} className="underline cursor-pointer">Aceptar</button>
                 <button disabled={loading} onClick={() => setOpen(false)} className="underline cursor-pointer">Cancelar</button>
             </div>

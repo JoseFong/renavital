@@ -58,28 +58,31 @@ model ProductCategory {
 }
 
 model Procedure {
-  id     Int     @id @default(autoincrement())
-  code   String
-  name   String
-  active Boolean
+  id        Int     @id @default(autoincrement())
+  code      String
+  name      String
+  active    Boolean
+  shortForm String
 
   configurations Configuration[]
 }
 
 model Anesthesia {
-  id     Int     @id @default(autoincrement())
-  code   String
-  name   String
-  active Boolean
+  id        Int     @id @default(autoincrement())
+  code      String
+  name      String
+  active    Boolean
+  shortForm String
 
   configurations Configuration[]
 }
 
 model Stay {
-  id     Int     @id @default(autoincrement())
-  code   String
-  name   String
-  active Boolean
+  id        Int     @id @default(autoincrement())
+  code      String
+  name      String
+  active    Boolean
+  shortForm String
 
   configurations Configuration[]
 }
@@ -97,6 +100,7 @@ model Configuration {
   stay       Stay       @relation(fields: [stayId], references: [id], onDelete: Cascade)
 
   configurationCategories ConfigurationCategories[]
+  exchangeRates           ExchangeRate[]
 }
 
 model ConfigurationCategories {
@@ -165,34 +169,34 @@ model Patient {
 }
 
 model Specialty {
-  id Int @id @default(autoincrement())
+  id   Int    @id @default(autoincrement())
   name String
 
   doctorSpecialties DoctorSpecialty[]
 }
 
 model Doctor {
-  id Int @id @default(autoincrement())
-  firstName String
-  lastName String
+  id             Int     @id @default(autoincrement())
+  firstName      String
+  lastName       String
   secondLastName String?
 
   gender String
-  curp String? @unique
-  rfc String? @unique
+  curp   String? @unique
+  rfc    String? @unique
 
-  email String? @unique
-  countryCode String
-  phone String @unique
+  email          String? @unique
+  countryCode    String
+  phone          String  @unique
   secondaryPhone String?
 
   country String
-  state String
-  city String
+  state   String
+  city    String
   address String?
 
-  university String
-  licenseNumber String  
+  university    String
+  licenseNumber String
 
   observations String?
 
@@ -201,13 +205,24 @@ model Doctor {
   registeredAt String
 
   doctorSpecialties DoctorSpecialty[]
+  exchangeRates     ExchangeRate[]
 }
 
 model DoctorSpecialty {
-  id Int @id @default(autoincrement())
+  id          Int @id @default(autoincrement())
   specialtyId Int
-  doctorId Int
+  doctorId    Int
 
-  specialty Specialty @relation(fields: [specialtyId],references: [id],onDelete: Cascade)
-  doctor Doctor @relation(fields: [doctorId],references: [id],onDelete: Cascade)
+  specialty Specialty @relation(fields: [specialtyId], references: [id], onDelete: Cascade)
+  doctor    Doctor    @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+}
+
+model ExchangeRate {
+  id              Int   @id @default(autoincrement())
+  doctorId        Int
+  configurationId Int
+  exchangeRate    Float
+
+  configuration Configuration @relation(fields: [configurationId], references: [id], onDelete: Cascade)
+  doctor        Doctor        @relation(fields: [doctorId], references: [id], onDelete: Cascade)
 }

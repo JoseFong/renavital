@@ -7,7 +7,7 @@ import {
   Stay
 } from "@/app/generated/prisma/client"
 
-import NavBarMedicos from "@/components/medicos/NavBarMedicos"
+import NavBarMedicos from "@/components/persons/medicos/NavBarMedicos"
 import Loading from "@/components/public/Loading"
 import {
   ConfigurationCategoryInfo,
