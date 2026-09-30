@@ -170,6 +170,17 @@ export async function getDoctorFromId(id: number) {
                 include: {
                     specialty: true
                 }
+            },
+            exchangeRates: {
+                include: {
+                    configuration: {
+                        include: {
+                            anesthesia: true,
+                            stay: true,
+                            procedure: true
+                        }
+                    }
+                }
             }
         }
     })

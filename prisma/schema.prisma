@@ -166,6 +166,8 @@ model Patient {
   profession String?
   civilState String?
   language   String?
+
+  codeUsages CodeUsage[]
 }
 
 model Specialty {
@@ -206,6 +208,7 @@ model Doctor {
 
   doctorSpecialties DoctorSpecialty[]
   exchangeRates     ExchangeRate[]
+  codeUsages        CodeUsage[]
 }
 
 model DoctorSpecialty {
@@ -225,4 +228,33 @@ model ExchangeRate {
 
   configuration Configuration @relation(fields: [configurationId], references: [id], onDelete: Cascade)
   doctor        Doctor        @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+}
+
+///////////////////////////////////////
+////////CODIGOS DE DESCUENTO///////////
+///////////////////////////////////////
+
+model Code {
+  id             Int     @id @default(autoincrement())
+  code           String  @unique
+  singleUse      Boolean
+  maxUses        Int
+  startDate      String?
+  endDate        String?
+  appliesToTotal Boolean
+  discountType   String
+  discount       Float
+  valid          Boolean
+}
+
+model CodeUsage {
+  id           Int     @id @default(autoincrement())
+  codeId       Int
+  doctorId     Int?
+  patientId    Int?
+  numberOfUses Int
+  valid        Boolean
+
+  patient Patient? @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  doctor  Doctor?  @relation(fields: [doctorId], references: [id], onDelete: Cascade)
 }

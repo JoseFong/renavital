@@ -138,6 +138,7 @@ export type DoctorInfo = {
     registeredAt: string,
 
     doctorSpecialties: DoctorSpecialtyInfo[]
+    exchangeRates: ExchangeRateInfo[]
 }
 
 export type ExchangeRateInfo = {

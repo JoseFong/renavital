@@ -1,7 +1,7 @@
 "use client"
 
 import NavBarPersons from "@/components/persons/PersonsNavBar"
-import { SpecialtyInfo } from "@/lib/types"
+import { ExchangeRateInfo, SpecialtyInfo } from "@/lib/types"
 import axios from "axios"
 import { useParams, useRouter } from "next/navigation"
 import { useEffect, useRef, useState } from "react"
@@ -9,13 +9,15 @@ import codes from "@/lib/countryCodes.json"
 import toast from "react-hot-toast"
 import ConfirmCreateDoctor from "@/components/persons/medicos/ConfirmCreateDoctor"
 import ConfirmUpdateDoctor from "@/components/persons/medicos/ConfirmUpdateDoctor"
+import DoctorExchangeRates from "@/components/persons/medicos/DoctorExchangeRates"
+import CreateExchangeRate from "@/components/persons/medicos/CreateExchangeRate"
 
 function page() {
-    const [loading,setLoading] = useState(false)
+    const [loading, setLoading] = useState(false)
 
     const params = useParams()
     const id = params.id
-    
+
     const router = useRouter()
 
     const loaded = useRef(false)
@@ -24,7 +26,11 @@ function page() {
 
     const [specialties, setSpecialties] = useState<SpecialtyInfo[]>([])
 
+    const [isCreateOpen,setIsCreateOpen] = useState(false)
+
     const initialDoctor = {
+        id: -1,
+
         firstName: "",
         lastName: "",
         secondLastName: "",
@@ -50,10 +56,13 @@ function page() {
 
         defaultExchangeRate: "20",
 
-        specialtyIds: [] as number[]
+        specialtyIds: [] as number[],
+        exchangeRates: [] as ExchangeRateInfo[]
     }
 
     const [doctorInfo, setDoctorInfo] = useState<{
+        id: number,
+
         firstName: string,
         lastName: string,
         secondLastName: string,
@@ -79,7 +88,8 @@ function page() {
 
         defaultExchangeRate: string,
 
-        specialtyIds: number[]
+        specialtyIds: number[],
+        exchangeRates: ExchangeRateInfo[]
     }>(initialDoctor)
 
     async function fetchSpecialties() {
@@ -95,29 +105,30 @@ function page() {
         }
     }
 
-    async function fetchDoctor(){
-        try{
+    async function fetchDoctor() {
+        try {
             setLoading(true)
-            const response = await axios.get("/api/doctors/"+id)
+            const response = await axios.get("/api/doctors/" + id)
             const data = response.data
+            console.log(data)
             setDoctorInfo({
                 ...data,
-                secondLastName: data.secondLastName??"",
-                curp: data.curp??"",
-                rfc: data.rfc??"",
-                email: data.email??"",
-                secondaryPhone: data.secondaryPhone??"",
-                address: data.address??"",
-                observations: data.observations??"",
-                specialtyIds: data.doctorSpecialties.map((ds:any)=>ds.specialtyId),
+                secondLastName: data.secondLastName ?? "",
+                curp: data.curp ?? "",
+                rfc: data.rfc ?? "",
+                email: data.email ?? "",
+                secondaryPhone: data.secondaryPhone ?? "",
+                address: data.address ?? "",
+                observations: data.observations ?? "",
+                specialtyIds: data.doctorSpecialties.map((ds: any) => ds.specialtyId),
                 defaultExchangeRate: data.defaultExchangeRate.toString()
             })
             setLoading(false)
-        }catch(e:any){
+        } catch (e: any) {
             setLoading(false)
-            if(e.response && e.response.data && e.response.data.message){
+            if (e.response && e.response.data && e.response.data.message) {
                 toast.error(e.response.data.message)
-            }else{
+            } else {
                 toast.error(e.message)
             }
         }
@@ -528,37 +539,41 @@ function page() {
                             />
                         </div>
 
-                        <div className="flex flex-row gap-1">
-                            <label>
-                                Tipo de cambio predeterminado
-                                <span className="font-extrabold text-red-500">
-                                    *
-                                </span>
-                            </label>
-
-                            <input
-                                type="number"
-                                min="0"
-                                step="0.01"
-                                name="defaultExchangeRate"
-                                value={doctorInfo.defaultExchangeRate}
-                                onChange={(e) =>
-                                    setDoctorInfo({
-                                        ...doctorInfo,
-                                        defaultExchangeRate: e.target.value.toString()
-                                    })
-                                }
-                                placeholder="Tipo de cambio"
-                            />
-                        </div>
 
                     </div>
                 </div>
 
                 <div className="shadow-xl rounded-xl flex flex-col gap-2 p-5">
                     <h1 className="font-bold text-lg">
-                        Especialidades
+                        Tipo de cambio
                     </h1>
+                    <div className="flex flex-row gap-1">
+                        Tipo de cambio predeterminado
+                        <span className="font-extrabold text-red-500">
+                            *
+                        </span>
+                        <input
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            name="defaultExchangeRate"
+                            value={doctorInfo.defaultExchangeRate}
+                            onChange={(e) =>
+                                setDoctorInfo({
+                                    ...doctorInfo,
+                                    defaultExchangeRate: e.target.value.toString()
+                                })
+                            }
+                            placeholder="Tipo de cambio"
+                        />
+                    </div>
+                    <label>Tipos de cambio especificos</label>
+                    <DoctorExchangeRates doctor={doctorInfo} exchangeRates={doctorInfo.exchangeRates} reload={fetchDoctor}/>
+                    <button onClick={()=>setIsCreateOpen(true)} className="underline cursor-pointer">Registrar tipo de cambio especifico</button>
+                </div>
+
+                <div className="shadow-xl rounded-xl flex flex-col gap-2 p-5">
+
 
                     <div className="flex flex-col">
 
@@ -627,6 +642,7 @@ function page() {
                     doctorInfo={doctorInfo}
                 />
             )}
+            <CreateExchangeRate open={isCreateOpen} setOpen={setIsCreateOpen} doctor={doctorInfo} reload={fetchDoctor}/>
         </>
     )
 }

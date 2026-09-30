@@ -1,6 +1,13 @@
 import { Category, Configuration, ConfigurationCategories, Product } from "@/app/generated/prisma/client";
 import prisma from "@/lib/prisma";
 
+/**
+ * Create
+ * Read
+ * Update
+ * Delete
+ */
+
 export async function getAllConfigurations(){
     const configurations = await prisma.configuration.findMany({
         include: {

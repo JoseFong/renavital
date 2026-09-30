@@ -137,10 +137,34 @@ function page() {
 
                         <p className="font-bold">Cédula Profesional</p>
                         <p>{doctor?.licenseNumber ?? "-"}</p>
-
-                        <p className="font-bold">Tipo de Cambio Predeterminado</p>
-                        <p>{doctor?.defaultExchangeRate ?? "-"}</p>
                     </div>
+                </div>
+
+                <div className="border rounded-md flex flex-col gap-1 p-3">
+                    <h2 className="font-bold">Tipo de cambio</h2>
+                    <div className="grid grid-cols-2">
+                        <p className="font-bold">Tipo de cambio predeterminado</p>
+                        <p>{doctor?.defaultExchangeRate}</p>
+                    </div>
+                    <p className="font-bold">Tipos de cambio especificos</p>
+                    {doctor?.exchangeRates.length===0 ? <div>No hay tipos de cambio especificos.</div> : 
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th className="p-1 border">Procedimiento</th>
+                                    <th className="p-1 border">Tipo de cambio</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {doctor?.exchangeRates.map((er)=>(
+                                    <tr key={er.id}>
+                                        <td className="border p-1">{er.configuration.procedure.shortForm}{" - "}{er.configuration.anesthesia.shortForm}{" - "}{er.configuration.stay.shortForm}</td>
+                                        <td className="border p-1">{er.exchangeRate}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    }
                 </div>
 
                 <div className="border rounded-md flex flex-col gap-1 p-3">
