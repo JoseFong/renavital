@@ -245,6 +245,8 @@ model Code {
   discountType   String
   discount       Float
   valid          Boolean
+
+  codeUsages CodeUsage[]
 }
 
 model CodeUsage {
@@ -255,6 +257,7 @@ model CodeUsage {
   numberOfUses Int
   valid        Boolean
 
+  code Code @relation(fields: [codeId],references: [id],onDelete: Cascade)
   patient Patient? @relation(fields: [patientId], references: [id], onDelete: Cascade)
   doctor  Doctor?  @relation(fields: [doctorId], references: [id], onDelete: Cascade)
 }

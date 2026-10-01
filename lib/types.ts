@@ -1,4 +1,4 @@
-import { Anesthesia, Category, Configuration, ConfigurationCategories, Doctor, Procedure, Product, ProductCategory, ProductClassification, RuleTarget, Specialty, Stay } from "@/app/generated/prisma/client"
+import { Anesthesia, Category, Code, Configuration, ConfigurationCategories, Doctor, Patient, Procedure, Product, ProductCategory, ProductClassification, RuleTarget, Specialty, Stay } from "@/app/generated/prisma/client"
 import { Decimal } from "@prisma/client/runtime/client"
 
 export type ProductInfo = {
@@ -147,4 +147,34 @@ export type ExchangeRateInfo = {
     doctorId: number,
     configurationId: number,
     configuration: ConfigurationInfo
+}
+
+//////////////////////////////////////
+///TIPOS PARA CODIGOS DE DESCUENTO////
+//////////////////////////////////////
+
+export type CodeUsageInfo = {
+    id: number,
+    codeId: number,
+    code: Code,
+    doctorId:number,
+    doctor: Doctor,
+    numberOfUses: number,
+    patientId: number,
+    patient: Patient,
+    valid: boolean
+}
+
+export type CodeInfo = {
+    id: number,
+    appliesToTotal: boolean,
+    code: string,
+    discount: number,
+    discountType: string,
+    endDate: string,
+    startDate: string,
+    maxUses:number,
+    singleUse: boolean,
+    valid: boolean,
+    codeUsages: CodeUsageInfo[]
 }

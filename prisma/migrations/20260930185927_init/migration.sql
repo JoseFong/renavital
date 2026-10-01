@@ -1,0 +1,2 @@
+-- AddForeignKey
+ALTER TABLE "CodeUsage" ADD CONSTRAINT "CodeUsage_codeId_fkey" FOREIGN KEY ("codeId") REFERENCES "Code"("id") ON DELETE CASCADE ON UPDATE CASCADE;

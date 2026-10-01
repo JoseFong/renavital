@@ -9,6 +9,7 @@ import insurance from "@/assets/icons8-insurance-50.png"
 import user from "@/assets/icons8-user-48.png"
 import money from "@/assets/icons8-dollar-bag-50.png"
 import home from "@/assets/icons8-home-50.png"
+import discount from "@/assets/icons8-discount-50.png"
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
@@ -95,6 +96,11 @@ const menu = [
                 path: "/admin/configuraciones/reglas"
             }
         ]
+    },
+    {
+        name: "Códigos de descuento",
+        icon: discount,
+        path: "/admin/codigos"
     },
     {
         name: "Aseguradoras",
