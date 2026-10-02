@@ -41,7 +41,7 @@ function page() {
                 <p>[{code?.valid ? "🟢 ACTIVO" : "🔴 INACTIVO"}]</p>
                 <div className="flex flex-row gap-2">
                     <button onClick={()=>router.push("/admin/codigos/"+id+"/editar")} className="underline cursor-pointer">Editar</button>
-                    <button className="underline cursor-pointer">Gestionar Personas</button>
+                    <button onClick={()=>router.push("/admin/codigos/"+id+"/personas")} className="underline cursor-pointer">Gestionar Personas</button>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                     <div className="p-2 border flex flex-col gap-1">
