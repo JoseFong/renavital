@@ -99,8 +99,9 @@ model Configuration {
   anesthesia Anesthesia @relation(fields: [anesthesiaId], references: [id], onDelete: Cascade)
   stay       Stay       @relation(fields: [stayId], references: [id], onDelete: Cascade)
 
-  configurationCategories ConfigurationCategories[]
-  exchangeRates           ExchangeRate[]
+  configurationCategories        ConfigurationCategories[]
+  exchangeRates                  ExchangeRate[]
+  medicalProcedureConfigurations MedicalProcedureConfiguration[]
 }
 
 model ConfigurationCategories {
@@ -257,7 +258,25 @@ model CodeUsage {
   numberOfUses Int
   valid        Boolean
 
-  code Code @relation(fields: [codeId],references: [id],onDelete: Cascade)
+  code    Code     @relation(fields: [codeId], references: [id], onDelete: Cascade)
   patient Patient? @relation(fields: [patientId], references: [id], onDelete: Cascade)
   doctor  Doctor?  @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+}
+
+model MedicalProcedure {
+  id     Int     @id @default(autoincrement())
+  code   String
+  name   String
+  active Boolean
+
+  medicalProcedureConfigurations MedicalProcedureConfiguration[]
+}
+
+model MedicalProcedureConfiguration {
+  id                 Int @id @default(autoincrement())
+  medicalProcedureId Int
+  configurationId    Int
+
+  medicalProcedure MedicalProcedure @relation(fields: [medicalProcedureId], references: [id])
+  configuration    Configuration    @relation(fields: [configurationId], references: [id])
 }

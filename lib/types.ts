@@ -1,4 +1,4 @@
-import { Anesthesia, Category, Code, Configuration, ConfigurationCategories, Doctor, Patient, Procedure, Product, ProductCategory, ProductClassification, RuleTarget, Specialty, Stay } from "@/app/generated/prisma/client"
+import { Anesthesia, Category, Code, Configuration, ConfigurationCategories, Doctor, MedicalProcedure, Patient, Procedure, Product, ProductCategory, ProductClassification, RuleTarget, Specialty, Stay } from "@/app/generated/prisma/client"
 import { Decimal } from "@prisma/client/runtime/client"
 
 export type ProductInfo = {
@@ -28,7 +28,8 @@ export type ConfigurationInfo = {
     active: boolean,
     procedure: Procedure,
     anesthesia: Anesthesia,
-    stay: Stay
+    stay: Stay,
+    medicalProcedureConfigurations: MedicalProcedureConfigurationInfo[]
 }
 
 export type RuleTargetInfo = {
@@ -177,4 +178,24 @@ export type CodeInfo = {
     singleUse: boolean,
     valid: boolean,
     codeUsages: CodeUsageInfo[]
+}
+
+////////////////////////////////////////////
+///TIPOS PARA PROCEDIMIENTOS ESPECIFICOS////
+////////////////////////////////////////////
+
+export type MedicalProcedureConfigurationInfo = {
+    id: number,
+    medicalProcedureId: number,
+    configurationId: number,
+    medicalProcedure: MedicalProcedure,
+    configuration: ConfigurationInfo
+}
+
+export type medicalProcedureInfo = {
+    id: number,
+    code: string,
+    name: string,
+    active: boolean,
+    medicalProcedureConfigurations: MedicalProcedureConfigurationInfo[]
 }

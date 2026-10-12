@@ -25,6 +25,7 @@ function NavBarCatalogue({ selected }: { selected: string }) {
       <button onClick={() => goToPage("productos")} className={`${selected === "Productos" && "bg-blue-600"} hover:bg-blue-500 p-4 transition-all cursor-pointer`}>Productos</button>
       <button onClick={() => goToPage("clasificaciones")} className={`${selected === "Clasificaciones" && "bg-blue-600"} hover:bg-blue-500 p-4 transition-all cursor-pointer`}>Clasificaciones</button>
       <button onClick={() => goToPage("conceptos")} className={`${selected === "Conceptos" && "bg-blue-600"} hover:bg-blue-500 p-4 transition-all cursor-pointer`}>Conceptos</button>
+      <button onClick={() => goToPage("procedimientos")} className={`${selected === "procedimientos" && "bg-blue-600"} hover:bg-blue-500 p-4 transition-all cursor-pointer`}>Procedimientos Médicos</button>
       <SideBarMenu showing={showing} setShowing={setShowing} />
     </div>
   )

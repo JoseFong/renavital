@@ -77,7 +77,6 @@ function page() {
               <th className="border-2 p-1">Anestesia</th>
               <th className="border-2 p-1">Estancia</th>
               <th className="border-2 p-1">Estado</th>
-              <th className="border-2 p-1">Detalles</th>
               <th className="border-2 p-1">Acciones</th>
             </tr>
           </thead>
@@ -96,8 +95,9 @@ function page() {
                 </td>
                 <td className="border-2 p-1">
                   <button onClick={()=>router.push("/admin/configuraciones/configuraciones/"+c.id)} className="underline cursor-pointer">Ver detalles</button>
-                </td>
-                <td className="border-2 p-1">
+                  {" "}
+                  <button onClick={()=>router.push("/admin/configuraciones/configuraciones/"+c.id+"/procedimientos")} className="underline cursor-pointer">Gestionar procedimientos ({c.medicalProcedureConfigurations.length})</button>
+                  {" "}
                   <button onClick={()=>{setSelectedConfiguration(c); setIsDeleteOpen(true)}} className="underline cursor-pointer">Eliminar</button>
                 </td>
               </tr>

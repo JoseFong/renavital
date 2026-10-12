@@ -8,20 +8,25 @@ import prisma from "@/lib/prisma";
  * Delete
  */
 
-export async function getAllConfigurations(){
+export async function getAllConfigurations() {
     const configurations = await prisma.configuration.findMany({
         include: {
             anesthesia: true,
             stay: true,
-            procedure: true
+            procedure: true,
+            medicalProcedureConfigurations: {
+                include: {
+                    medicalProcedure: true
+                }
+            }
         }
     })
 
-    const sorted = configurations.sort((a,b)=>a.code.localeCompare(b.code))
+    const sorted = configurations.sort((a, b) => a.code.localeCompare(b.code))
     return sorted
 }
 
-export async function createConfiguration(data:any){
+export async function createConfiguration(data: any) {
     let exists = await prisma.configuration.findFirst({
         where: {
             AND: [
@@ -37,22 +42,22 @@ export async function createConfiguration(data:any){
             ]
         }
     })
-    if(exists) throw new Error("Ya existe otra configuración similar, elimínela y vuelva a crearla para cambiar su configuración.")
-    
+    if (exists) throw new Error("Ya existe otra configuración similar, elimínela y vuelva a crearla para cambiar su configuración.")
+
     const configuration = await prisma.configuration.create({
         data: {
             code: data.code,
             procedureId: data.procedureId,
             anesthesiaId: data.anesthesiaId,
             stayId: data.stayId,
-            active: true    
+            active: true
         }
     })
 
     console.log(data.selectedCategories)
 
     await prisma.configurationCategories.createMany({
-        data: data.selectedCategories.map((sc:number)=>({
+        data: data.selectedCategories.map((sc: number) => ({
             configurationId: configuration.id,
             categoryId: sc,
             active: true
@@ -60,13 +65,13 @@ export async function createConfiguration(data:any){
     })
 }
 
-export async function updateConfigurationStatus(id:number){
+export async function updateConfigurationStatus(id: number) {
     let exists = await prisma.configuration.findFirst({
         where: {
             id: id
         }
     })
-    if(!exists) throw new Error("No se encontró la configuración.")
+    if (!exists) throw new Error("No se encontró la configuración.")
 
     await prisma.configuration.update({
         where: {
@@ -78,44 +83,49 @@ export async function updateConfigurationStatus(id:number){
     })
 }
 
-export async function deleteConfiguration(id:number){
+export async function deleteConfiguration(id: number) {
     let exists = await prisma.configuration.findFirst({
         where: {
             id: id
         }
     })
-    if(!exists) throw new Error("No se encontró la configuración.")
-    
+    if (!exists) throw new Error("No se encontró la configuración.")
+
     await prisma.configuration.delete({
         where: {
-            id:id
+            id: id
         }
     })
 }
 
-export async function getConfiguationFromId(id:number){
+export async function getConfiguationFromId(id: number) {
     let exists = await prisma.configuration.findFirst({
         where: {
-            id:id
+            id: id
         },
-        include:{
+        include: {
             procedure: true,
             anesthesia: true,
-            stay: true
+            stay: true,
+            medicalProcedureConfigurations: {
+                include: {
+                    medicalProcedure: true
+                }
+            }
         }
     })
-    if(!exists) throw new Error("No se encontró la configuración.")
+    if (!exists) throw new Error("No se encontró la configuración.")
 
     return exists
 }
 
-export async function getCategoriesFromConfiguration(id:number){
+export async function getCategoriesFromConfiguration(id: number) {
     let exists = await prisma.configuration.findFirst({
         where: {
-            id:id
+            id: id
         }
     })
-    if(!exists) throw new Error("No se encontró la configuración.")
+    if (!exists) throw new Error("No se encontró la configuración.")
 
     const configurationCategories = await prisma.configurationCategories.findMany({
         where: {
@@ -124,14 +134,14 @@ export async function getCategoriesFromConfiguration(id:number){
     })
 
     const category = await prisma.category.findMany()
-    const filteredCategories = category.filter((c:Category)=>configurationCategories.some((cc:ConfigurationCategories)=>c.id===cc.categoryId))
+    const filteredCategories = category.filter((c: Category) => configurationCategories.some((cc: ConfigurationCategories) => c.id === cc.categoryId))
     return filteredCategories
 }
 
-export async function getFullInfoFromConfiguration(id:number){
+export async function getFullInfoFromConfiguration(id: number) {
     let exists = await prisma.configuration.findFirst({
         where: {
-            id:id
+            id: id
         },
         include: {
             anesthesia: true,
@@ -153,14 +163,14 @@ export async function getFullInfoFromConfiguration(id:number){
         }
     })
 
-    if(!exists) throw new Error("Configuración no encontrada.")
+    if (!exists) throw new Error("Configuración no encontrada.")
     return exists
 }
 
-export async function getFullInfoFromActiveConfiguration(id:number){
+export async function getFullInfoFromActiveConfiguration(id: number) {
     let exists = await prisma.configuration.findFirst({
         where: {
-            id:id
+            id: id
         },
         include: {
             anesthesia: true,
@@ -176,7 +186,7 @@ export async function getFullInfoFromActiveConfiguration(id:number){
                     category: {
                         include: {
                             productCategories: {
-                                where:{
+                                where: {
                                     product: {
                                         active: true
                                     }
@@ -192,6 +202,30 @@ export async function getFullInfoFromActiveConfiguration(id:number){
         }
     })
 
-    if(!exists) throw new Error("Configuración no encontrada.")
+    if (!exists) throw new Error("Configuración no encontrada.")
     return exists
+}
+
+export async function assignMedicalProceduresToConfiguration(id: number, medicalProcedureIds: number[]) {
+    let exists = await prisma.configuration.findUnique({
+        where: {
+            id: id
+        }
+    })
+    if (!exists) throw new Error("No se encontró la configuración.")
+
+    await prisma.$transaction(async (tx) => {
+        await tx.medicalProcedureConfiguration.deleteMany({
+            where: {
+                configurationId: id
+            }
+        })
+
+        await tx.medicalProcedureConfiguration.createMany({
+            data: medicalProcedureIds.map((mpi) => ({
+                medicalProcedureId: mpi,
+                configurationId: id
+            }))
+        })
+    })
 }
