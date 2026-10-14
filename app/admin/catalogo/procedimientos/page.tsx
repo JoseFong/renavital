@@ -2,7 +2,7 @@
 import UpdateMedicalProcedure from "@/components/catalogue/MedicalProcedures/UpdateMedicalProcedure"
 import UpdateStatus from "@/components/catalogue/MedicalProcedures/UpdateStatus"
 import NavBarCatalogue from "@/components/catalogue/NavBarCatalogue"
-import { medicalProcedureInfo } from "@/lib/types"
+import { MedicalProcedureInfo } from "@/lib/types"
 import axios from "axios"
 import { useRouter } from "next/navigation"
 import { useEffect, useRef, useState } from "react"
@@ -13,7 +13,7 @@ function page() {
 
   const loaded = useRef(false)
 
-  const [medicalProcedures, setMedicalProcedures] = useState<medicalProcedureInfo[]>([])
+  const [medicalProcedures, setMedicalProcedures] = useState<MedicalProcedureInfo[]>([])
 
   const [selectedMedicalProcedure, setSelectedMedicalProcedure] = useState<any>()
   const [isUpdateOpen, setIsUpdateOpen] = useState(false)
@@ -47,6 +47,7 @@ function page() {
               <th className="border p-1">Nombre</th>
               <th className="border p-1">Estado</th>
               <th className="border p-1">Configuraciones</th>
+              <th className="border p-1">Especialidades</th>
               <th className="border p-1">Acciones</th>
             </tr>
           </thead>
@@ -61,8 +62,10 @@ function page() {
                   </button>
                 </td>
                 <td className="border p-1">
-                  ({mp.medicalProcedureConfigurations.length}){" "}
-                  <button onClick={()=>router.push("/admin/catalogo/procedimientos/"+mp.id+"/configuraciones")} className="underline cursor-pointer">Gestionar</button>
+                  <button onClick={()=>router.push("/admin/catalogo/procedimientos/"+mp.id+"/configuraciones")} className="underline cursor-pointer">Gestionar ({mp.medicalProcedureConfigurations.length})</button>
+                </td>
+                <td className="border p-1">
+                  <button onClick={()=>router.push("/admin/catalogo/procedimientos/"+mp.id+"/especialidades")} className="underline cursor-pointer">Gestionar ({mp.medicalProcedureSpecialties.length})</button>
                 </td>
                 <td className="border p-1">
                   <button onClick={() => { setSelectedMedicalProcedure(mp); setIsUpdateOpen(true) }} className="underline cursor-pointer">Editar</button>

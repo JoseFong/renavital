@@ -1,7 +1,7 @@
 "use client"
 
 import NavBarConfig from "@/components/configurationsCot/NavBarConfig"
-import { ConfigurationInfo, medicalProcedureInfo } from "@/lib/types"
+import { ConfigurationInfo, MedicalProcedureInfo } from "@/lib/types"
 import axios from "axios"
 import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
@@ -16,7 +16,7 @@ function page() {
     const [loading,setLoading] = useState(false)
 
     const [configuration,setConfiguration] = useState<ConfigurationInfo>()
-    const [medicalProcedures,setMedicalProcedures] = useState<medicalProcedureInfo[]>([])
+    const [medicalProcedures,setMedicalProcedures] = useState<MedicalProcedureInfo[]>([])
     
     const [selectedProcedures,setSelectedProcedures] = useState<number[]>([])
 

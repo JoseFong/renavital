@@ -74,6 +74,11 @@ export async function getSpecialtyById(id:number){
                     doctor: true,
                     specialty: true
                 }
+            },
+            medicalProcedureSpecialties: {
+                include: {
+                    specialty: true
+                }
             }
         }
     })
@@ -133,5 +138,29 @@ export async function createManySpecialties(data:any){
         data: data.map((d:any)=>({
             name: d.name
         }))
+    })
+}
+
+export async function assignProceduresToSpecialty(id:number,medicalProcedureIds:number[]){
+    let exists = await prisma.specialty.findUnique({
+        where: {
+            id: id
+        }
+    })
+    if(!exists) throw new Error("No se encontró la especialidad.")
+
+    await prisma.$transaction(async(tx)=>{
+        await tx.medicalProcedureSpecialty.deleteMany({
+            where: {
+                specialtyId: id
+            }
+        })
+
+        await tx.medicalProcedureSpecialty.createMany({
+            data: medicalProcedureIds.map((mpi)=>({
+                medicalProcedureId: mpi,
+                specialtyId: id
+            }))
+        })
     })
 }

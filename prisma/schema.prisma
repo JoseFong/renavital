@@ -12,6 +12,10 @@ datasource db {
   provider = "postgresql"
 }
 
+////////////////////////////
+////CATALOGO////////////////
+////////////////////////////
+
 model Product {
   id                      Int     @id @default(autoincrement())
   name                    String
@@ -56,6 +60,10 @@ model ProductCategory {
 
   @@unique([productId, categoryId])
 }
+
+////////////////////////////
+///////CONFIGURACIONES//////
+////////////////////////////
 
 model Procedure {
   id        Int     @id @default(autoincrement())
@@ -139,6 +147,10 @@ model RuleTarget {
   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 }
 
+///////////////////////
+////PERSONAS///////////
+///////////////////////
+
 model Patient {
   id Int @id @default(autoincrement())
 
@@ -175,7 +187,8 @@ model Specialty {
   id   Int    @id @default(autoincrement())
   name String
 
-  doctorSpecialties DoctorSpecialty[]
+  doctorSpecialties           DoctorSpecialty[]
+  medicalProcedureSpecialties MedicalProcedureSpecialty[]
 }
 
 model Doctor {
@@ -263,6 +276,10 @@ model CodeUsage {
   doctor  Doctor?  @relation(fields: [doctorId], references: [id], onDelete: Cascade)
 }
 
+///////////////////////
+///PROCEDIMIENTOS//////
+///////////////////////
+
 model MedicalProcedure {
   id     Int     @id @default(autoincrement())
   code   String
@@ -270,6 +287,7 @@ model MedicalProcedure {
   active Boolean
 
   medicalProcedureConfigurations MedicalProcedureConfiguration[]
+  medicalProcedureSpecialties    MedicalProcedureSpecialty[]
 }
 
 model MedicalProcedureConfiguration {
@@ -279,4 +297,13 @@ model MedicalProcedureConfiguration {
 
   medicalProcedure MedicalProcedure @relation(fields: [medicalProcedureId], references: [id])
   configuration    Configuration    @relation(fields: [configurationId], references: [id])
+}
+
+model MedicalProcedureSpecialty {
+  id                 Int @id @default(autoincrement())
+  medicalProcedureId Int
+  specialtyId        Int
+
+  medicalProcedure MedicalProcedure @relation(fields: [medicalProcedureId], references: [id])
+  specialty        Specialty        @relation(fields: [specialtyId], references: [id])
 }

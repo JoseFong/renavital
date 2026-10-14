@@ -2,7 +2,7 @@
 
 import { Anesthesia, Configuration, Procedure, Stay } from "@/app/generated/prisma/client"
 import NavBarCatalogue from "@/components/catalogue/NavBarCatalogue"
-import { ConfigurationInfo, medicalProcedureInfo } from "@/lib/types"
+import { ConfigurationInfo, MedicalProcedureInfo } from "@/lib/types"
 import axios from "axios"
 import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
@@ -16,7 +16,7 @@ function page() {
 
     const [loading, setLoading] = useState(false)
 
-    const [medicalProcedure, setMedicalProcedure] = useState<medicalProcedureInfo>()
+    const [medicalProcedure, setMedicalProcedure] = useState<MedicalProcedureInfo>()
     const [procedures, setProcedures] = useState<Procedure[]>([])
     const [anesthesias, setAnesthesias] = useState<Anesthesia[]>([])
     const [stays, setStays] = useState<Stay[]>([])

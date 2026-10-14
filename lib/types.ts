@@ -1,5 +1,14 @@
-import { Anesthesia, Category, Code, Configuration, ConfigurationCategories, Doctor, MedicalProcedure, Patient, Procedure, Product, ProductCategory, ProductClassification, RuleTarget, Specialty, Stay } from "@/app/generated/prisma/client"
+import { Anesthesia, Category, Code, Configuration, ConfigurationCategories, Doctor, MedicalProcedure, MedicalProcedureSpecialty, Patient, Procedure, Product, ProductCategory, ProductClassification, RuleTarget, Specialty, Stay } from "@/app/generated/prisma/client"
 import { Decimal } from "@prisma/client/runtime/client"
+
+export type IdQuantity = {
+    id: number,
+    quantity: number
+}
+
+//////////////////////////////
+////CATALOGO//////////////////
+//////////////////////////////
 
 export type ProductInfo = {
     id: number,
@@ -14,10 +23,26 @@ export type ProductInfo = {
     productClassification: ProductClassification
 }
 
-export type IdQuantity = {
+export type CategoryInfo = {
     id: number,
-    quantity: number
+    active: boolean,
+    name: string,
+    productCategories: ProductCategoryInfo[]
 }
+
+export type ProductCategoryInfo = {
+    id: number,
+    productId: number,
+    product: Product,
+    quantity: number,
+    category: Category,
+    categoryId: number
+}
+
+
+//////////TYPES PARA CONFIGURACIONES, USADO EN EL COTIZADOR///////////
+//ESTOS SIGUIENTES TIPOS SE USAN PARA CREAR UN SOLO TIPO DE DATO GIGANTE QUE TIENE TODA LA INFORMACÍÓN
+//DE UNA CONFIGURACIÓN
 
 export type ConfigurationInfo = {
     id: number,
@@ -31,30 +56,6 @@ export type ConfigurationInfo = {
     stay: Stay,
     medicalProcedureConfigurations: MedicalProcedureConfigurationInfo[]
 }
-
-export type RuleTargetInfo = {
-    id: number
-    productId: number
-    quantity: number
-    ruleId: number
-    product: Product
-}
-
-export type RuleInfo = {
-    id: number,
-    triggerType: string,
-    type: string,
-    productSourceId: number | null,
-    categorySourceId: number | null,
-    ruleTargets: RuleTargetInfo[],
-    productSource: Product | null,
-    categorySource: Category | null
-}
-
-
-//////////TYPES PARA CONFIGURACIONES, USADO EN EL COTIZADOR///////////
-//ESTOS SIGUIENTES TIPOS SE USAN PARA CREAR UN SOLO TIPO DE DATO GIGANTE QUE TIENE TODA LA INFORMACÍÓN
-//DE UNA CONFIGURACIÓN
 
 export type ConfigurationCompleteInfo = {
     id: number,
@@ -76,23 +77,28 @@ export type ConfigurationCategoryInfo = {
     category: CategoryInfo
 }
 
-export type CategoryInfo = {
-    id: number,
-    active: boolean,
-    name: string,
-    productCategories: ProductCategoryInfo[]
+export type RuleTargetInfo = {
+    id: number
+    productId: number
+    quantity: number
+    ruleId: number
+    product: Product
 }
 
-export type ProductCategoryInfo = {
+export type RuleInfo = {
     id: number,
-    productId: number,
-    product: Product,
-    quantity: number,
-    category: Category,
-    categoryId: number
+    triggerType: string,
+    type: string,
+    productSourceId: number | null,
+    categorySourceId: number | null,
+    ruleTargets: RuleTargetInfo[],
+    productSource: Product | null,
+    categorySource: Category | null
 }
 
-//TIPOS PARA DOCTOR Y ESPECIALIDAD
+//////////////////////////////////////////
+/////TIPOS PARA DOCTOR Y ESPECIALIDAD/////
+//////////////////////////////////////////
 
 export type DoctorSpecialtyInfo = {
     id: number,
@@ -106,6 +112,7 @@ export type SpecialtyInfo = {
     id: number,
     name: string,
     doctorSpecialties: DoctorSpecialtyInfo[]
+    medicalProcedureSpecialties: MedicalProcedureSpecialtyInfo[]
 }
 
 export type DoctorInfo = {
@@ -192,10 +199,21 @@ export type MedicalProcedureConfigurationInfo = {
     configuration: ConfigurationInfo
 }
 
-export type medicalProcedureInfo = {
+export type MedicalProcedureInfo = {
     id: number,
     code: string,
     name: string,
     active: boolean,
+    
+    medicalProcedureSpecialties: MedicalProcedureSpecialtyInfo[]
     medicalProcedureConfigurations: MedicalProcedureConfigurationInfo[]
+}
+
+export type MedicalProcedureSpecialtyInfo = {
+    id: number,
+    medicalProcedureId: number,
+    specialtyId:number,
+
+    medicalProcedure: MedicalProcedure
+    specialty: Specialty
 }

@@ -60,6 +60,7 @@ function page() {
                                 <td className="border p-1">{s.name}</td>
                                 <td className="border p-1 gap-1">
                                     <button onClick={()=>router.push("/admin/personas/especialidades/"+s.id+"/medicos")} className="underline cursor-pointer">Ver médicos</button>{" "}
+                                    <button onClick={()=>router.push("/admin/personas/especialidades/"+s.id+"/procedimientos")} className="underline cursor-pointer">Gestionar procedimientos</button>{" "}
                                     <button onClick={()=>{setSelectedSpecialty(s); setIsUpdateOpen(true)}} className="underline cursor-pointer">Editar</button>{" "}
                                     <button onClick={()=>{setSelectedSpecialty(s); setIsDeleteOpen(true)}} className="underline cursor-pointer">Eliminar</button>
                                 </td>

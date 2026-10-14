@@ -13,6 +13,11 @@ export async function getAllMedicalProcedures() {
                         }
                     }
                 }
+            },
+            medicalProcedureSpecialties: {
+                include: {
+                    specialty: true
+                }
             }
         }
     })
@@ -132,6 +137,11 @@ export async function getMedicalProcedureById(id: number) {
                         }
                     }
                 }
+            },
+            medicalProcedureSpecialties: {
+                include: {
+                    specialty: true
+                }
             }
         }
     })
@@ -156,6 +166,30 @@ export async function assignConfigurationsToMedicalProcedure(id: number, configu
             data: configurationIds.map((ci) => ({
                 medicalProcedureId: id,
                 configurationId: ci
+            }))
+        })
+    })
+}
+
+export async function assignSpecialtyToMedicalProcedure(id:number,specialtyIds:number[]){
+    let exists = await prisma.medicalProcedure.findUnique({
+        where: {
+            id: id
+        }
+    })
+    if(!exists) throw new Error("No se encontró el procedimiento médico.")
+
+    await prisma.$transaction(async(tx)=>{
+        await tx.medicalProcedureSpecialty.deleteMany({
+            where: {
+                medicalProcedureId: id
+            }
+        })
+
+        await tx.medicalProcedureSpecialty.createMany({
+            data: specialtyIds.map((si)=>({
+                specialtyId: si,
+                medicalProcedureId: id
             }))
         })
     })
