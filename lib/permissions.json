@@ -1,0 +1,97 @@
+[
+    "Procedure.Create",
+    "Procedure.Read",
+    "Procedure.Update",
+    "Procedure.Delete",
+
+    "Anesthesia.Create",
+    "Anesthesia.Read",
+    "Anesthesia.Update",
+    "Anesthesia.Delete",
+
+    "Stay.Create",
+    "Stay.Read",
+    "Stay.Update",
+    "Stay.Delete",
+
+    "Product.Create",
+    "Product.Read",
+    "Product.Update",
+    "Product.Delete",
+
+    "ProductClassification.Create",
+    "ProductClassification.Read",
+    "ProductClassification.Update",
+    "ProductClassification.Delete",
+
+    "ProductClassification.Assign",
+
+    "Concept.Create",
+    "Concept.Read",
+    "Concept.Update",
+    "Concept.Delete",
+
+    "ProductConcept.Assign",
+
+    "Configuration.Create",
+    "Configuration.Read",
+    "Configuration.Update",
+    "Configuration.Delete",
+
+    "ConfigurationConcept.Assign",
+
+    "Rule.Read",
+    "Rule.Create",
+    "Rule.Update",
+    "Rule.Delete",
+
+    "Patient.Create",
+    "Patient.Read",
+    "Patient.Update",
+    "Patient.Delete",
+
+    "Doctor.Create",
+    "Doctor.Read",
+    "Doctor.Update",
+    "Doctor.Delete",
+
+    "Specialty.Create",
+    "Specialty.Read",
+    "Specialty.Update",
+    "Specialty.Delete",
+
+    "ExchangeRate.Create",
+    "ExchangeRate.Read",
+    "ExchangeRate.Update",
+    "ExchangeRate.Delete",
+
+    "DiscountCode.Create",
+    "DiscountCode.Read",
+    "DiscountCode.Update",
+    "DiscountCode.Delete",
+
+    "DiscountCodePerson.Assign",
+
+    "MedicalProcedure.Create",
+    "MedicalProcedure.Read",
+    "MedicalProcedure.Update",
+    "MedicalProcedure.Delete",
+
+    "MedicalProcedureConfiguration.Assign",
+    "MedicalProcedureSpecialty.Assign",
+
+    "User.Create",
+    "User.Read",
+    "User.Update",
+    "User.Delete",
+
+    "UserRole.Create",
+    "UserRole.Read",
+    "UserRole.Update",
+    "UserRole.Delete",
+
+    "Quote.Create",
+    "Quote.Read",
+    "Quote.Update",
+    "Quote.Delete"
+]

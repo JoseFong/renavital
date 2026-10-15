@@ -1,4 +1,4 @@
-import { Anesthesia, Category, Code, Configuration, ConfigurationCategories, Doctor, MedicalProcedure, MedicalProcedureSpecialty, Patient, Procedure, Product, ProductCategory, ProductClassification, RuleTarget, Specialty, Stay } from "@/app/generated/prisma/client"
+import { Anesthesia, Category, Code, Configuration, ConfigurationCategories, Doctor, MedicalProcedure, MedicalProcedureSpecialty, Patient, Procedure, Product, ProductCategory, ProductClassification, RuleTarget, Specialty, Stay, UserRole } from "@/app/generated/prisma/client"
 import { Decimal } from "@prisma/client/runtime/client"
 
 export type IdQuantity = {
@@ -216,4 +216,30 @@ export type MedicalProcedureSpecialtyInfo = {
 
     medicalProcedure: MedicalProcedure
     specialty: Specialty
+}
+
+////////////////////////////////////
+/////ROLES USUARIOS Y PERMISOS//////
+////////////////////////////////////
+
+export type UserRoleInfo = {
+    id: number,
+    name: string,
+    permissions: string[],
+    users: UserInfo[]
+}
+
+export type UserInfo = {
+    id: number,
+    username: string,
+    email: number,
+    doctorId: number|null,
+    active: boolean,
+    pendingPasswordSetup: boolean,
+    requireEmailCode: boolean,
+    restrictByIp: boolean,
+    doctor: DoctorInfo | null,
+
+    userRoleId: number,
+    userRole: UserRoleInfo
 }

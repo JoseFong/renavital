@@ -223,6 +223,7 @@ model Doctor {
   doctorSpecialties DoctorSpecialty[]
   exchangeRates     ExchangeRate[]
   codeUsages        CodeUsage[]
+  user              User?
 }
 
 model DoctorSpecialty {
@@ -306,4 +307,46 @@ model MedicalProcedureSpecialty {
 
   medicalProcedure MedicalProcedure @relation(fields: [medicalProcedureId], references: [id])
   specialty        Specialty        @relation(fields: [specialtyId], references: [id])
+}
+
+///////////////////////////////////
+///USUARIOS Y ROLES/PERSMISOS//////
+///////////////////////////////////
+
+model User {
+  id           Int    @id @default(autoincrement())
+  email        String @unique
+  passwordHash String
+  doctorId     Int?   @unique
+  userRoleId   Int?
+  username     String @unique
+
+  active               Boolean
+  pendingPasswordSetup Boolean
+
+  restrictByIp     Boolean
+  requireEmailCode Boolean
+
+  doctor   Doctor?   @relation(fields: [doctorId], references: [id])
+  userRole UserRole? @relation(fields: [userRoleId], references: [id])
+  sessions Session[]
+}
+
+model UserRole {
+  id          Int      @id @default(autoincrement())
+  name        String
+  permissions String[]
+
+  users User[]
+}
+
+model Session {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  createdAt DateTime
+  expiresAt DateTime
+  token     String   @unique
+  active    Boolean
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

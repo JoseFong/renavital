@@ -115,7 +115,16 @@ const menu = [
     {
         name: "Usuarios",
         icon: user,
-        path: "/admin/usuarios"
+        children: [
+            {
+                name: "Usuarios",
+                path: "/admin/usuarios/usuarios"
+            },
+            {
+                name: "Roles de Usuario",
+                path: "/admin/usuarios/roles"
+            }
+        ]
     }
 ]
 
