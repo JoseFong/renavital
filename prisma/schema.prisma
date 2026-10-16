@@ -321,6 +321,8 @@ model User {
   userRoleId   Int?
   username     String @unique
 
+  code String?
+
   active               Boolean
   pendingPasswordSetup Boolean
 

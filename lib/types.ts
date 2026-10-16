@@ -232,13 +232,14 @@ export type UserRoleInfo = {
 export type UserInfo = {
     id: number,
     username: string,
-    email: number,
+    email: string,
     doctorId: number|null,
     active: boolean,
     pendingPasswordSetup: boolean,
     requireEmailCode: boolean,
     restrictByIp: boolean,
     doctor: DoctorInfo | null,
+    code: string,
 
     userRoleId: number,
     userRole: UserRoleInfo
