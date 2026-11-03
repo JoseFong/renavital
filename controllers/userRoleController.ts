@@ -104,3 +104,11 @@ export async function assignUsersToUserRole(id:number,userIds:number[]){
         })
     })
 }
+
+export async function deleteUserRole(userRoleId:number){
+    await prisma.userRole.delete({
+        where: {
+            id: userRoleId
+        }
+    })
+}

@@ -16,17 +16,18 @@ function page() {
   const params = useParams()
   const code = params.code
 
-  const [user,setUser] = useState<User>()
-
   const [password,setPassword] = useState("")
   const [confirmPassword,setConfirmPassword] = useState("")
 
   const [showPassword,setShowPassword] = useState(false)
 
-  async function fetchUser() {
+  async function fetchDoesUserExists() {
     try {
-      const response = await axios.get("/api/activateAccount/"+code)
-      setUser(response.data)
+      const data = {
+        code
+      }
+
+      await axios.post("/api/activateAccount/check",data)
     } catch (e: any) {
       toast.error(e.response?.data?.message ?? e.message)
       router.push("/login")
@@ -35,16 +36,12 @@ function page() {
 
   useEffect(()=>{
     if(loaded.current) return
-    fetchUser()
+    fetchDoesUserExists()
     loaded.current=true
   },[])
 
-  if(!user) return null
-
   async function fetchPost() {
     try {
-      if(!user) return 
-
       setLoading(true)
       toast.loading("Cargando...",{id:"1"})
 
@@ -55,10 +52,11 @@ function page() {
       if(password.trim()!==confirmPassword.trim()) throw new Error("Las contraseñas no coinciden.")
 
       const data = {
-        password: password
+        password: password,
+        code: code
       }
 
-      await axios.patch("/api/users/"+user.id+"/password",data)
+      axios.post("/api/activateAccount",data)
 
       setLoading(false)
       toast.success("Cuenta activada exitosamente.",{id:"1"})
@@ -72,10 +70,6 @@ function page() {
   return (
     <div className="flex flex-col gap-1 p-5">
       <h1 className="font-bold text-lg">Activar nuevo usuario</h1>
-      <label className="font-bold">Usuario</label>
-      <p>{user.username}</p>
-      <label className="font-bold">Correo electrónico.</label>
-      <p>{user.email}</p>
       <label className="font-bold">Para activar su cuenta, cree una contraseña</label>
       <p>(La contraseña debe contener al menos 12 caracteres)</p>
       <label className="font-bold">Contraseña</label>

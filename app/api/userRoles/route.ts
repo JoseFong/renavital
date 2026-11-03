@@ -1,8 +1,12 @@
 import { createUserRole, getAllUserRoles } from "@/controllers/userRoleController";
+import { getUserSession } from "@/middleware/session";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(){
     try{
+        const session = await getUserSession()
+        if(!session || !session.role.permissions.includes("UserRole.Read")) throw new Error("No está autorizado.")
+
         const userRoles = await getAllUserRoles()
 
         return NextResponse.json(userRoles)
@@ -13,6 +17,9 @@ export async function GET(){
 
 export async function POST(req:NextRequest){
     try{
+        const session = await getUserSession()
+        if(!session || !session.role.permissions.includes("UserRole.Create")) throw new Error("No está autorizado.")
+
         const data = await req.json()
         
         await createUserRole(data)

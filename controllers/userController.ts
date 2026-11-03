@@ -37,7 +37,14 @@ export async function createUser(data: any) {
         if (exists) throw new Error("Ya existe un usuario asociado a ese médico.")
     }
 
-    const code = createRandomCode(6)
+    let code = ""
+    do{
+        let exists = false
+        code = createRandomCode(6)
+        const userTest = await prisma.user.findFirst({where:{code:code}})
+        if(userTest) exists = true 
+    }while(exists)
+    
 
     await prisma.user.create({
         data: {
@@ -158,7 +165,56 @@ export async function updateUserPassword(id:number,password:string){
             id: id
         },
         data: {
+            passwordHash: hashed
+        }
+    })
+}
+
+export async function getUsersFromUserRole(userRoleId:number){
+    let exists = await prisma.userRole.findUnique({
+        where: {
+            id: userRoleId
+        }
+    })
+    if(!exists) throw new Error("No se encontró el rol de usuario.")
+
+    const users = await prisma.user.findMany({
+        where: {
+            userRoleId: userRoleId
+        }
+    })
+
+    return users
+}
+
+export async function doesUserWithCodeExist(code:string){
+    const user = await prisma.user.findFirst({
+        where: {
+            code: code,
+            pendingPasswordSetup: true
+        }
+    })
+
+    return user ? true : false
+}
+
+export async function activateAccount(password:string,code:string){
+    const user = await prisma.user.findFirst({
+        where: {
+            code: code
+        }
+    })
+    if(!user) throw new Error("Error del servidor.")
+
+    const hashed = await bcrypt.hash(password,12)
+
+    await prisma.user.update({
+        where: {
+            id: user.id
+        },
+        data: {
             passwordHash: hashed,
+            active: true,
             pendingPasswordSetup: false
         }
     })
