@@ -1,3 +1,4 @@
+import { createRandomCode } from "@/lib/createCode";
 import prisma from "@/lib/prisma";
 
 export async function createManyPatients(data: any) {
@@ -77,8 +78,9 @@ export async function createPatient(data: any) {
         if (exists) throw new Error("Ya existe otro paciente con esa misma CURP.")
     }
 
+    const code = createRandomCode(6)
 
-    await prisma.patient.create({
+    const patient = await prisma.patient.create({
         data: {
             firstName: data.firstName,
             lastName: data.lastName,
@@ -105,9 +107,14 @@ export async function createPatient(data: any) {
 
             observations: data.observations,
 
-            registeredAt: dateString
+            registeredAt: dateString,
+            
+            code: code,
+            canQuote: false
         }
     })
+
+    return patient
 }
 
 export async function getAllPatients() {
@@ -231,4 +238,23 @@ export async function getPatientById(id:number){
     if(!patient) throw new Error("No se encontró el paciente.")
     
     return patient
+}
+
+export async function togglePatientCanQuote(id:number){
+    const patient = await prisma.patient.findUnique({
+        where: {
+            id: id
+        }
+    })
+
+    if(!patient) throw new Error("No se encontró al paciente.")
+
+    await prisma.patient.update({
+        where: {
+            id: id
+        },
+        data: {
+            canQuote: !patient.canQuote
+        }
+    })
 }

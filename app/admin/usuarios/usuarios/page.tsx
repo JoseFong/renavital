@@ -54,7 +54,7 @@ function page() {
               <tr key={u.id}>
                 <td className="border p-1">{u.username}</td>
                 <td className="border p-1">{u.email}</td>
-                <td className="border p-1">{u.userRole.name}</td>
+                <td className="border p-1">{u.userRole?.name ?? "-"}</td>
                 <td className="border p-1">
                   {u.doctor ? u.doctor.firstName + " " + u.doctor.lastName + " " + (u.doctor.secondLastName ?? "") : "-"}
                 </td>

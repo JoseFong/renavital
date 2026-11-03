@@ -171,15 +171,15 @@ export async function assignConfigurationsToMedicalProcedure(id: number, configu
     })
 }
 
-export async function assignSpecialtyToMedicalProcedure(id:number,specialtyIds:number[]){
+export async function assignSpecialtyToMedicalProcedure(id: number, specialtyIds: number[]) {
     let exists = await prisma.medicalProcedure.findUnique({
         where: {
             id: id
         }
     })
-    if(!exists) throw new Error("No se encontró el procedimiento médico.")
+    if (!exists) throw new Error("No se encontró el procedimiento médico.")
 
-    await prisma.$transaction(async(tx)=>{
+    await prisma.$transaction(async (tx) => {
         await tx.medicalProcedureSpecialty.deleteMany({
             where: {
                 medicalProcedureId: id
@@ -187,10 +187,67 @@ export async function assignSpecialtyToMedicalProcedure(id:number,specialtyIds:n
         })
 
         await tx.medicalProcedureSpecialty.createMany({
-            data: specialtyIds.map((si)=>({
+            data: specialtyIds.map((si) => ({
                 specialtyId: si,
                 medicalProcedureId: id
             }))
         })
     })
+}
+
+export async function getMedicalProceduresFromManySpecialties(specialtyIds: number[]) {
+    const medicalProcedureSpecialties = await prisma.medicalProcedureSpecialty.findMany({
+        where: {
+            specialtyId: {
+                in: specialtyIds
+            }
+        }
+    })
+
+    let medicalProcedureIds: number[] = []
+    medicalProcedureSpecialties.forEach((mps) => {
+        if (!medicalProcedureIds.includes(mps.medicalProcedureId)) {
+            medicalProcedureIds.push(mps.medicalProcedureId)
+        }
+    })
+
+    const medicalProcedures = await prisma.medicalProcedure.findMany({
+        where: {
+            id: {
+                in: medicalProcedureIds
+            },
+            active: true
+        },
+        include: {
+            medicalProcedureConfigurations: {
+                where: {
+                    configuration: {
+                        is: {
+                            active: true,
+                            procedure: {
+                                is: { active: true }
+                            },
+                            anesthesia: {
+                                is: { active: true }
+                            },
+                            stay: {
+                                is: { active: true }
+                            }
+                        }
+                    }
+                },
+                include: {
+                    configuration: {
+                        include: {
+                            procedure: true,
+                            anesthesia: true,
+                            stay: true
+                        }
+                    }
+                }
+            }
+        }
+    })
+
+    return medicalProcedures
 }

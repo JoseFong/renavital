@@ -1,5 +1,5 @@
 export function createRandomCode(length: number){
-    const letters = "QWERTYUIOPASDFGHJKLZXCVBNM"
+    const letters = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm"
 
     let code = ""
     for(let i=0;i<length+1;i++){

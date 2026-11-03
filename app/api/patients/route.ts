@@ -14,8 +14,8 @@ export async function GET() {
 export async function POST(req: NextRequest) {
     try {
         const data = await req.json()
-        await createPatient(data)
-        return NextResponse.json({status:200})
+        const createdPatient = await createPatient(data)
+        return NextResponse.json(createdPatient)
     } catch (e: any) {
         console.log(e.message)
         return NextResponse.json({ message: e.message }, { status: 500 })

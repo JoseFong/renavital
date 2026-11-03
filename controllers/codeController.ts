@@ -1,3 +1,4 @@
+import { CodeUsage } from "@/app/generated/prisma/client";
 import prisma from "@/lib/prisma";
 
 export async function getAllCodes() {
@@ -246,4 +247,36 @@ export async function assignCodeToPerson(id: number, doctorIds: number[], patien
             }))
         })
     })
+}
+
+export async function validateCode(code:string,type:string,personId:number){
+    await checkCodes()
+
+    const discountCode = await prisma.code.findFirst({
+        where: {
+            code: code
+        },
+        include: {
+            codeUsages: true
+        }
+    })
+
+    console.log(discountCode)
+
+    if(!discountCode) throw new Error("Código no válido.")
+
+    if(!discountCode.valid) throw new Error("Código no válido.")
+
+    const codeUsage = discountCode.codeUsages.find((cu)=>{
+        if(type==="DOCTOR"){
+            if(cu.doctorId===personId) return cu
+        }else{
+            if(cu.patientId===personId) return cu
+        }
+    })
+
+    if(!codeUsage) throw new Error("Código no válido.")
+    if(!codeUsage.valid) throw new Error("Código no válido.")
+
+    return discountCode
 }

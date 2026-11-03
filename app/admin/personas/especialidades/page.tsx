@@ -4,6 +4,7 @@ import NavBarPersons from "@/components/persons/PersonsNavBar"
 import CreateSpecialty from "@/components/persons/specialties/CreateSpecialty"
 import DeleteSpecialty from "@/components/persons/specialties/DeleteSpecialty"
 import UpdateSpecialty from "@/components/persons/specialties/UpdateSpecialty"
+import { normalizeText } from "@/lib/normalizeText"
 import { SpecialtyInfo } from "@/lib/types"
 import axios from "axios"
 import { useRouter } from "next/navigation"
@@ -21,6 +22,8 @@ function page() {
     const [isCreateOpen,setIsCreateOpen] = useState(false)
     const [isUpdateOpen,setIsUpdateOpen] = useState(false)
     const [isDeleteOpen,setIsDeleteOpen] = useState(false)
+
+    const [search,setSearch] = useState("")
 
     async function fetchSpecialties() {
         try {
@@ -41,12 +44,19 @@ function page() {
         loaded.current=true
     },[])
 
+    let specialtyResults = [...specialties]
+    if(search.trim()!==""){
+        let s = normalizeText(search)
+        specialtyResults = specialtyResults.filter((sr)=>normalizeText(sr.name).includes(s))
+    }
+
     return (
         <>
             <NavBarPersons selected="especialidades" />
             <div className="flex flex-col gap-1 p-5">
                 <h1 className="font-bold">Especialidades</h1>
                 <button onClick={()=>setIsCreateOpen(true)} className="underline cursor-pointer">Registrar</button>
+                <input placeholder="Buscar especialidades" value={search} onChange={(e)=>setSearch(e.target.value)}/>
                 <table>
                     <thead>
                         <tr>
@@ -55,7 +65,7 @@ function page() {
                         </tr>
                     </thead>
                     <tbody>
-                        {specialties.map((s)=>(
+                        {specialtyResults.map((s)=>(
                             <tr key={s.id}>
                                 <td className="border p-1">{s.name}</td>
                                 <td className="border p-1 gap-1">

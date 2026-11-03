@@ -71,9 +71,11 @@ function page() {
         if(user){
             setUsername(user.username)
             setEmail(user.email)
-            setUserRoleId(user.userRoleId.toString())
             if(user.doctorId){
                 setDoctorId(user.doctorId.toString())
+            }
+            if(user.userRoleId){
+                setUserRoleId(user.userRoleId.toString())
             }
             setRequireEmailCode(user.requireEmailCode)
             setRestrictByIp(user.restrictByIp)

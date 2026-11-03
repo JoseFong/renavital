@@ -1,4 +1,5 @@
 import { createProduct, deleteManyProducts, getActiveProducts, getAllProducts, getInactiveProducts } from "@/controllers/productsController";
+import { getUserSession } from "@/middleware/session";
 import { NextRequest, NextResponse } from "next/server";
 
 /**
@@ -7,6 +8,12 @@ import { NextRequest, NextResponse } from "next/server";
  */
 export async function GET(req:NextRequest){
     try{
+        const userSession = await getUserSession()
+
+        console.log(userSession)
+        if(!userSession) return NextResponse.json({message:"No esta iniciado sesión."},{status:500})
+        if(!userSession.role.permissions.includes("Product.Read")) return NextResponse.json({message:"No está autorizado."},{status:500})
+
         const active = req.nextUrl.searchParams.get("active")
 
         if(active==="true"){

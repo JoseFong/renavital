@@ -244,3 +244,19 @@ export type UserInfo = {
     userRoleId: number,
     userRole: UserRoleInfo
 }
+
+export type UserSessionInfo = {
+    id: number,
+    user: UserInfo
+}
+
+export type AuthenticatedUser = {
+    id: number,
+    email: string,
+    username: string,
+    role: {
+        name: string,
+        permissions: string[]
+    },
+    doctorId: number|null
+}

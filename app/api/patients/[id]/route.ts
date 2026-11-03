@@ -1,4 +1,4 @@
-import { deletePatient, getPatientById, updatePatient } from "@/controllers/patientController";
+import { deletePatient, getPatientById, togglePatientCanQuote, updatePatient } from "@/controllers/patientController";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req:NextRequest,{params}:{params:Promise<{id:string}>}){
@@ -33,6 +33,19 @@ export async function DELETE(req:NextRequest,{params}:{params:Promise<{id:string
         const idNum = Number(id)
     
         await deletePatient(idNum)
+        return NextResponse.json({status:200})
+    }catch(e:any){
+        return NextResponse.json({message:e.message},{status:500})
+    }
+}
+
+export async function PUT(req:NextRequest,{params}:{params:Promise<{id:string}>}){
+    try{
+        const {id} = await params
+        const idNum = Number(id)
+    
+        await togglePatientCanQuote(idNum)
+
         return NextResponse.json({status:200})
     }catch(e:any){
         return NextResponse.json({message:e.message},{status:500})

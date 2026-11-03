@@ -91,7 +91,8 @@
     "UserRole.Delete",
 
     "Quote.Create",
-    "Quote.Read",
+    "Quote.ReadAll",
+    "Quote.ReadOwn",
     "Quote.Update",
     "Quote.Delete"
 ]

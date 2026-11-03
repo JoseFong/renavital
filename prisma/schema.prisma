@@ -29,6 +29,7 @@ model Product {
   productCategories     ProductCategory[]
   ruleTargets           RuleTarget[]
   rules                 Rule[]
+  quoteItems            QuoteItems[]
 }
 
 model ProductClassification {
@@ -110,6 +111,7 @@ model Configuration {
   configurationCategories        ConfigurationCategories[]
   exchangeRates                  ExchangeRate[]
   medicalProcedureConfigurations MedicalProcedureConfiguration[]
+  quotes                         Quote[]
 }
 
 model ConfigurationCategories {
@@ -180,7 +182,11 @@ model Patient {
   civilState String?
   language   String?
 
+  canQuote Boolean
+  code     String
+
   codeUsages CodeUsage[]
+  quotes     Quote[]
 }
 
 model Specialty {
@@ -224,6 +230,7 @@ model Doctor {
   exchangeRates     ExchangeRate[]
   codeUsages        CodeUsage[]
   user              User?
+  quotes            Quote[]
 }
 
 model DoctorSpecialty {
@@ -262,6 +269,7 @@ model Code {
   valid          Boolean
 
   codeUsages CodeUsage[]
+  quotes     Quote[]
 }
 
 model CodeUsage {
@@ -351,4 +359,63 @@ model Session {
   active    Boolean
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+/////////////////////
+////COTIZACIONES/////
+/////////////////////
+
+model Quote {
+  id            Int    @id @unique @default(autoincrement())
+  folio         String @unique
+  status        String
+  scheduledDate String
+  scheduledTime String
+
+  doctorId  Int
+  patientId Int
+
+  codeId Int?
+
+  configurationId Int
+
+  medicalProcedureName String
+  configurationCode    String
+  procedureType        String
+  anesthesiaType       String
+  stayType             String
+
+  subTotalUsd Decimal
+  subTotalMxn Decimal
+
+  discountType      String?
+  discountValue     Decimal?
+  discountAppliesTo String?
+  exchangeRate      Decimal
+
+  extraDiscountType      String?
+  extraDiscountValue     String?
+  extraDiscountAppliesTo String?
+
+  createdAt    DateTime
+  lastModified DateTime
+
+  quoteItems    QuoteItems[]
+  doctor        Doctor        @relation(fields: [doctorId], references: [id])
+  patient       Patient       @relation(fields: [patientId], references: [id])
+  code          Code?         @relation(fields: [codeId], references: [id])
+  configuration Configuration @relation(fields: [configurationId], references: [id])
+}
+
+model QuoteItems {
+  id              Int     @id @default(autoincrement())
+  quoteId         Int
+  productId       Int?
+  categoryId      Int?
+  productName     String
+  productPrice    Decimal
+  productQuantity Int
+
+  quote   Quote    @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+  product Product? @relation(fields: [productId], references: [id])
 }

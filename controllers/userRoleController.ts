@@ -80,3 +80,27 @@ export async function getUserRoleById(id:number){
 
     return exists
 }
+
+export async function assignUsersToUserRole(id:number,userIds:number[]){
+    await prisma.$transaction(async(tx)=>{
+        await tx.user.updateMany({
+            where: {
+                userRoleId: id
+            },
+            data: {
+                userRoleId: null
+            }
+        })
+
+        await tx.user.updateMany({
+            where: {
+                id: {
+                    in: userIds
+                }
+            },
+            data: {
+                userRoleId: id
+            }
+        })
+    })
+}

@@ -1,5 +1,6 @@
 import { createRandomCode } from "@/lib/createCode";
 import prisma from "@/lib/prisma";
+import bcrypt from "bcryptjs";
 
 export async function getAllUsers() {
     return await prisma.user.findMany({
@@ -132,6 +133,33 @@ export async function updateUserStatus(id:number){
         },
         data: {
             active: !user.active
+        }
+    })
+}
+
+export async function getUserByCodeForActivation(code:string){
+    const user = await prisma.user.findFirst({
+        where: {
+            code: code,
+            pendingPasswordSetup: true
+        }
+    })
+
+    if(!user) throw new Error("No se encontró el usuario.")
+
+    return user
+}
+
+export async function updateUserPassword(id:number,password:string){
+    const hashed = await bcrypt.hash(password,12)
+    
+    await prisma.user.update({
+        where: {
+            id: id
+        },
+        data: {
+            passwordHash: hashed,
+            pendingPasswordSetup: false
         }
     })
 }

@@ -14,6 +14,8 @@ import cardiogram from "@/assets/icons8-file-cardiogram-48.png"
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
+import toast from "react-hot-toast"
+import axios from "axios"
 
 
 const menu = [
@@ -28,11 +30,11 @@ const menu = [
         children: [
             {
                 name: "Histórico",
-                path: "/cotizaciones"
+                path: "/cotizaciones/historico"
             },
             {
                 name: "Nueva cotización",
-                path: "/medicos/cotizacion"
+                path: "/cotizaciones/nueva"
             }
         ]
     },
@@ -138,6 +140,8 @@ function SideBarMenu({
 }) {
 
     const router = useRouter()
+    
+    const [loading,setLoading] = useState(false)
 
     const [shCurrent, setShCurrent] = useState("")
 
@@ -173,6 +177,21 @@ function SideBarMenu({
         setShowing(false)
     }
 
+    async function fetchLogout(){
+        try{
+            toast.loading("Cerrando sesión...",{id:"1"})
+            setLoading(true)
+
+            await axios.get("/api/login")
+
+            setLoading(false)
+            toast.dismissAll()
+            router.push("/")
+        }catch(e:any){
+            setLoading(false)
+            toast.error(e.response?.data?.message ?? e.message,{id:"1"})
+        }
+    }
 
     return (
         <div
@@ -186,12 +205,14 @@ function SideBarMenu({
                 <h1 className="text-xl font-bold">
                     Menú
                 </h1>
+                <button disabled={loading} onClick={fetchLogout} className="underline cursor-pointer disabled:cursor-not-allowed">Cerrar sesión</button>
                 <div className="flex flex-col text-lg gap-5">
                     {menu.map((item) => (
                         <div key={item.name} className="flex flex-col">
                             <button
+                                disabled={loading}
                                 onClick={() => item.children ? toggleShowing(item.name.toLowerCase()) : item.path && goToPage(item.path)}
-                                className="flex flex-row gap-2 items-center hover:bg-blue-500 transition-all cursor-pointer py-2 px-8"
+                                className="disabled:cursor-not-allowed flex flex-row gap-2 items-center hover:bg-blue-500 transition-all cursor-pointer py-2 px-8"
                             >
                                 <Image
                                     src={item.icon}
