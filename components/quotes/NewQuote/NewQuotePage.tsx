@@ -15,14 +15,7 @@ import QuoteDetails from "./QuoteDetails"
 import DiscountCodePersonSection from "./DiscountCodePersonSection"
 import DateSelectorSection from "./DateSelectorSection"
 import { useRouter } from "next/navigation"
-
-type ItemSelection = {
-    productId: number,
-    quantity: number,
-    categoryId: number,
-    productName: string,
-    productPrice: number
-}
+import { ItemSelection } from "@/lib/types"
 
 function NewQuotePageDoctor({ session }: { session: AuthenticatedUser|null }) {
     const loaded = useRef(false)
@@ -130,7 +123,7 @@ function NewQuotePageDoctor({ session }: { session: AuthenticatedUser|null }) {
         return medicalProcedure.name
     }
 
-    async function fetchSaveQuoteDraft(){
+    async function fetchSaveQuoteDraft(status:string){
         try{
             setLoading(true)
             toast.loading("Cargando...")
@@ -142,6 +135,7 @@ function NewQuotePageDoctor({ session }: { session: AuthenticatedUser|null }) {
             if(time==="") throw new Error("Seleccione una hora aproximada para el procedimiento.")
  
             const data = {
+                status: status,
                 patientId: Number(selectedPatient),
                 doctorId: doctor?.id,
                 codeId: discountCode ? discountCode.id : null,
@@ -198,7 +192,8 @@ function NewQuotePageDoctor({ session }: { session: AuthenticatedUser|null }) {
                         <ProductSelectionSection configuration={configuration} selectedItems={selectedItems} setSelectedItems={setSelectedItems} />
                     }
 
-                    <button onClick={fetchSaveQuoteDraft} disabled={loading} className="underline cursor-pointer disabled:cursor-not-allowed">Guardar borrador</button>
+                    <button onClick={()=>fetchSaveQuoteDraft("DRAFT")} disabled={loading} className="underline cursor-pointer disabled:cursor-not-allowed">Guardar como borrador</button>
+                    <button onClick={()=>fetchSaveQuoteDraft("PENDING_ADMIN")} disabled={loading} className="underline cursor-pointer disabled:cursor-not-allowed">Guardar</button>
                 </div>
                 <div className="bg-white p-3 rounded-xl shadow-xl w-1/4 fixed right-10 h-[80vh] overflow-y-scroll">
                     <QuoteDetails

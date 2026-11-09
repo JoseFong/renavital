@@ -17,7 +17,8 @@ export type ProductInfo = {
     service: boolean,
     price: Decimal,
     active: boolean,
-    productClassificationId: number
+    productClassificationId: number,
+    taxRate: number,
 
     productCategories: ProductCategoryInfo[]
     productClassification: ProductClassification
@@ -165,7 +166,7 @@ export type CodeUsageInfo = {
     id: number,
     codeId: number,
     code: Code,
-    doctorId:number,
+    doctorId: number,
     doctor: Doctor,
     numberOfUses: number,
     patientId: number,
@@ -181,7 +182,7 @@ export type CodeInfo = {
     discountType: string,
     endDate: string,
     startDate: string,
-    maxUses:number,
+    maxUses: number,
     singleUse: boolean,
     valid: boolean,
     codeUsages: CodeUsageInfo[]
@@ -204,7 +205,7 @@ export type MedicalProcedureInfo = {
     code: string,
     name: string,
     active: boolean,
-    
+
     medicalProcedureSpecialties: MedicalProcedureSpecialtyInfo[]
     medicalProcedureConfigurations: MedicalProcedureConfigurationInfo[]
 }
@@ -212,7 +213,7 @@ export type MedicalProcedureInfo = {
 export type MedicalProcedureSpecialtyInfo = {
     id: number,
     medicalProcedureId: number,
-    specialtyId:number,
+    specialtyId: number,
 
     medicalProcedure: MedicalProcedure
     specialty: Specialty
@@ -233,7 +234,7 @@ export type UserInfo = {
     id: number,
     username: string,
     email: string,
-    doctorId: number|null,
+    doctorId: number | null,
     active: boolean,
     pendingPasswordSetup: boolean,
     requireEmailCode: boolean,
@@ -258,5 +259,56 @@ export type AuthenticatedUser = {
         name: string,
         permissions: string[]
     },
-    doctorId: number|null
+    doctorId: number | null
+}
+
+////////////////////////////////////
+//////TIPOS PARA COTIZACIONES///////
+////////////////////////////////////
+
+export type ItemSelection = {
+    productId: number,
+    quantity: number,
+    categoryId: number,
+    productName: string,
+    productPrice: number
+}
+
+export type QuoteInfo = {
+    id: number,
+    basefolio: string,
+    revision: number,
+    status: string,
+    scheduledDate: string,
+    scheduledTime: string,
+
+    doctorId: number,
+    patientId: number,
+
+    codeId: number,
+    configurationId: number,
+
+    medicalProcedureName: string,
+    configurationCode: string,
+    procedureType: string,
+    anesthesiaType: string,
+    stayType: string,
+
+    subTotalUsd: Decimal,
+    subTotalMxn: Decimal,
+
+    discountType: string | null,
+    discountValue: Decimal | null,
+    discountAppliesTo: string | null,
+    exchangeRate: Decimal | null,
+
+    extraDiscountType: string | null,
+    extraDiscountValue: string | null,
+    extraDiscountAppliesTo: string | null,
+
+    createdAt: Date
+    lastModified: Date
+
+    patient: Patient
+    itemSelections: ItemSelection[]
 }

@@ -8,6 +8,7 @@ import axios from "axios"
 import { useRouter } from "next/navigation"
 import { ProductClassification } from "@/app/generated/prisma/client"
 import SelectClassification from "@/components/catalogue/Products/SelectClassification"
+import taxRates from "@/lib/taxRates.json"
 
 function page() {
     const loaded = useRef(false)
@@ -23,6 +24,8 @@ function page() {
     const [classifications,setClassifications] = useState<ProductClassification[]>([])
 
     const [isSelectClassificationOpen,setIsSelectClassificationOpen] = useState(false)
+
+    const [taxRate,setTaxRate] = useState("")
 
     const [loading, setLoading] = useState(false)
 
@@ -56,6 +59,8 @@ function page() {
          
             if(equipment && !service) throw new Error("Un item marcado como 'Equipo' no puede ser considerado un producto.")
 
+            if(taxRate==="") throw new Error("Seleccione una taza de impuesto para el producto.")
+
             let productClassificationId = null
             if(selectedClassification) productClassificationId = selectedClassification.id
 
@@ -64,7 +69,8 @@ function page() {
                 equipment: equipment,
                 service: service,
                 price: Number(price),
-                productClassificationId
+                productClassificationId,
+                taxRate: Number(taxRate)
             }
 
             await axios.post("/api/products",data)
@@ -97,29 +103,43 @@ function page() {
             <NavBarCatalogue selected="Productos" />
             <div className="p-5 flex flex-col gap-1">
                 <h1 className="font-bold">Registrar nuevo producto</h1>
+
                 <label>Nombre</label>
                 <input placeholder="Ej. SERVICIO DE GESTION CLINICA INTEGRAL - NOM-004-SSA3" value={name} onChange={(e) => setName(e.target.value.toUpperCase())} />
+                
                 <label>Precio unitario (USD)</label>
                 <div className="flex flex-row gap-1">
                     <button onClick={() => modifyPrice(1)} className="p-2 shadow-md rounded-sm cursor-pointer">+</button>
                     <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} />
                     <button onClick={() => modifyPrice(-1)} className="p-2 shadow-md rounded-sm cursor-pointer">-</button>
                 </div>
+
+                <label>Taza de impuesto</label>
+                <select value={taxRate} onChange={(e)=>setTaxRate(e.target.value)}>
+                    <option value={""}>Seleccione una taza de impuesto</option>
+                    {taxRates.map((tr:any)=>(
+                        <option key={tr.value} value={tr.value}>{tr.name}</option>
+                    ))}
+                </select>
+                
                 <div className="flex flex-row gap-1">
                     <label>¿Este producto es considerado equipo?</label>
                     <input type="checkbox" checked={equipment} onChange={() => setEquipment(!equipment)} />
                     <Image src={question} alt="Información" />
                     <p>Al marcar esta opción el producto será considerado equipo medico y no consumible.</p>
                 </div>
+                
                 <div className="flex flex-row gap-1">
                     <label>¿Este producto es considerado un servicio?</label>
                     <input type="checkbox" checked={service} onChange={() => setService(!service)} />
                     <Image src={question} alt="Información" />
                     <p>Al marcar esta opción será considerado servicio y no producto.</p>
                 </div>
+                
                 <label>Clasificación (opcional)</label>
                 <button disabled={loading} onClick={()=>setIsSelectClassificationOpen(true)} className="underline cursor-pointer">
                     {selectedClassification ? selectedClassification.name : "PRESIONE PARA SELECCIONAR"}
+                
                 </button>
                 <button onClick={fetchCreate} disabled={loading} className="underline cursor-pointer">Aceptar</button>
                 <button onClick={goBack} disabled={loading} className="underline cursor-pointer">Regresar</button>

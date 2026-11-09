@@ -1,13 +1,6 @@
 import prisma from "@/lib/prisma";
-import { getUserSession } from "@/middleware/session";
+import { ItemSelection } from "@/lib/types";
 
-type ItemSelection = {
-    productId: number,
-    quantity: number,
-    categoryId: number,
-    productName: string,
-    productPrice: number
-}
 
 export async function createQuote(data: any) {
     //CREACION DE NUMERO DE FOLIO
@@ -29,7 +22,7 @@ export async function createQuote(data: any) {
     let number = todayQuotes.length + 1
 
     let folio =
-        "COT-R1-" +
+        "COT-" +
         now.getFullYear().toString() +
         (now.getMonth() + 1).toString().padStart(2, "0") +
         now.getDate().toString().padStart(2, "0") +
@@ -94,8 +87,9 @@ export async function createQuote(data: any) {
     await prisma.$transaction(async (tx) => {
         const createdQuote = await tx.quote.create({
             data: {
-                folio: folio,
-                status: "EN REVISIÓN",
+                basefolio: folio,
+                revision: 1,
+                status: data.status,
                 scheduledDate: data.scheduledDate,
                 scheduledTime: data.scheduledTime,
 
@@ -140,7 +134,7 @@ export async function createQuote(data: any) {
     })
 }
 
-export async function getQuotesFromDoctor(doctorId: number) {
+export async function getCurrentQuotesFromDoctor(doctorId: number) {
     let exists = await prisma.doctor.findFirst({
         where: {
             id: doctorId
@@ -151,6 +145,10 @@ export async function getQuotesFromDoctor(doctorId: number) {
     const quotes = await prisma.quote.findMany({
         where: {
             doctorId: doctorId
+        },
+        include: {
+            quoteItems: true,
+            patient: true
         }
         //,
         /*include: {
@@ -159,4 +157,12 @@ export async function getQuotesFromDoctor(doctorId: number) {
     })
 
     return quotes
+}
+
+export async function getQuoteFromId(quoteId:number){
+    return await prisma.quote.findFirst({
+        where: {
+            id: quoteId
+        }
+    })
 }

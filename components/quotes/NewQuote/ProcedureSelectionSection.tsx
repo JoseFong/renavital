@@ -175,7 +175,7 @@ function ProcedureSelectionSection({
 
                     <label className="font-bold">Tipo de estancia</label>
                     {filteredStays.map((as) => (
-                        <button disabled={loading || (selectedAnesthesia === "")} onClick={() => selectStay(as.id)} className={`${Number(selectedStay) === as.id && "bg-green-300"} disabled:cursor-not-allowed cursor-pointer border p-1`} key={as.id}>{as.shortForm}</button>
+                        <button disabled={loading || (selectedAnesthesia === "")} onClick={() => selectStay(as.id)} className={`${Number(selectedStay) === as.id && "bg-green-300"} disabled:cursor-not-allowed cursor-pointer border p-1`} key={as.id}>{as.name}</button>
                     ))}
                 </Fragment>
             }

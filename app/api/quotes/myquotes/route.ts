@@ -1,4 +1,4 @@
-import { getQuotesFromDoctor } from "@/controllers/quoteController"
+import { getCurrentQuotesFromDoctor} from "@/controllers/quoteController"
 import { getUserSession } from "@/middleware/session"
 import { NextRequest, NextResponse } from "next/server"
 
@@ -7,10 +7,15 @@ export async function GET(){
         console.log("Entraste a myquotes")
 
         const userSession = await getUserSession()
+        
+        console.log(userSession)
+
         if (!userSession || !userSession.role.permissions.includes("Quote.ReadOwn")) throw new Error("No está autorizado.")
         if(!userSession.doctorId) throw new Error("No está autorizado.") 
 
-        const quotes = await getQuotesFromDoctor(userSession.doctorId)
+        
+
+        const quotes = await getCurrentQuotesFromDoctor(userSession.doctorId)
 
         return NextResponse.json(quotes)
     } catch (e: any) {

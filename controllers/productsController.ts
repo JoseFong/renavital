@@ -100,7 +100,8 @@ export async function createProduct(data: any) {
             service: data.service,
             price: data.price,
             active: true,
-            productClassificationId: data.productClassificationId
+            productClassificationId: data.productClassificationId,
+            taxRate: data.taxRate
         }
     })
 }
@@ -157,7 +158,8 @@ export async function updateProduct(id: number, data: any) {
             equipment: data.equipment,
             price: data.price,
             service: data.service,
-            productClassificationId: data.productClassificationId
+            productClassificationId: data.productClassificationId,
+            taxRate: data.taxRate
         }
     })
 }
@@ -216,6 +218,30 @@ export async function unassignAllProductTypes(){
     await prisma.product.updateMany({
         data: {
             productTypeId: null
+        }
+    })
+}
+
+export async function tempUpdateManyProducts(categoryId:number){
+    const productCategories = await prisma.productCategory.findMany({
+        where: {
+            categoryId: categoryId
+        }
+    })
+
+    let ids:number[] = []
+    productCategories.map((pc)=>{
+        if(!ids.includes(pc.productId)) ids.push(pc.productId)
+    })
+
+    await prisma.product.updateMany({
+        where: {
+            id: {
+                in: ids
+            }
+        },
+        data: {
+            taxRate: 0.08
         }
     })
 }

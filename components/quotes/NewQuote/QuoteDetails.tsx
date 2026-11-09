@@ -2,14 +2,7 @@ import { Code, MedicalProcedure, Patient } from '@/app/generated/prisma/client'
 import { formatDate } from '@/lib/formatDate'
 import { ConfigurationCompleteInfo, ConfigurationInfo, DoctorInfo, MedicalProcedureInfo } from '@/lib/types'
 import React, { Fragment, useState } from 'react'
-
-type ItemSelection = {
-    productId: number,
-    quantity: number,
-    categoryId: number,
-    productName: string,
-    productPrice: number
-}
+import { ItemSelection } from '@/lib/types'
 
 function QuoteDetails({
     doctor,

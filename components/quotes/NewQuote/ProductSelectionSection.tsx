@@ -1,14 +1,8 @@
 "use client"
 import { CategoryInfo, ConfigurationCompleteInfo } from "@/lib/types"
 import { useEffect, useState } from "react"
+import { ItemSelection } from "@/lib/types"
 
-type ItemSelection = {
-    productId: number,
-    quantity: number,
-    categoryId: number,
-    productName: string,
-    productPrice: number
-}
 
 function ProductSelectionSection({
     configuration,

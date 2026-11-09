@@ -3,8 +3,10 @@ import NavBarCatalogue from "@/components/catalogue/NavBarCatalogue"
 import DeleteManyModal from "@/components/catalogue/Products/DeleteManyModal"
 import DeleteProductModal from "@/components/catalogue/Products/DeleteProductModal"
 import UpdateProductStatus from "@/components/catalogue/Products/UpdateProductStatus"
+import { normalizeText } from "@/lib/normalizeText"
 import { ProductCategoryInfo, ProductInfo } from "@/lib/types"
 import axios from "axios"
+import { ChevronDown, ChevronUp } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useEffect, useRef, useState } from "react"
 import toast from "react-hot-toast"
@@ -19,11 +21,11 @@ function ProductsMainPage() {
   const [selectedProduct, setSelectedProduct] = useState<ProductInfo | null>(null)
   const [isDeleteProductOpen, setIsDeleteProductOpen] = useState(false)
   const [isUpdateProductStatusOpen, setIsUpdateProductStatusOpen] = useState(false)
-  const [isDeleteManyOpen,setIsDeleteManyOpen] = useState(false)
+  const [isDeleteManyOpen, setIsDeleteManyOpen] = useState(false)
+
+  const [sortBy, setSortBy] = useState("")
 
   const [search, setSearch] = useState("")
-
-  const [results, setResults] = useState<ProductInfo[]>([])
 
   const [selectedIds, setSelectedIds] = useState<number[]>([])
 
@@ -75,27 +77,95 @@ function ProductsMainPage() {
     router.push("/admin/catalogo/productos/nuevo")
   }
 
-  useEffect(() => {
-    if (products)
-      setResults([...products])
-  }, [products])
+  let results = [...products]
+  if (search.trim() !== "") {
+    let s = normalizeText(search)
+    results = results.filter((p) => {
+      if (
+        normalizeText(p.name).includes(search) ||
+        p.productCategories.some((pc) => normalizeText(pc.category.name).includes(s))
+      ) {
+        return p
+      }
+    })
+  }
 
-  useEffect(() => {
-    if (search.trim() === "") {
-      setResults([...products])
-      return
+  if(sortBy!==""){
+    if(sortBy.includes("name")){
+      if(sortBy.includes("Up")){
+        results = results.sort((a,b)=>b.name.localeCompare(a.name))
+      }else{
+        results = results.sort((a,b)=>a.name.localeCompare(b.name))
+      }
     }
 
-    const searchTerm = search.toLowerCase().trim()
+    if(sortBy.includes("classification")){
+      if(sortBy.includes("Up")){
+        results = results.sort((a,b)=>(b.productClassification?.name ?? "").localeCompare((a.productClassification?.name ?? "")))
+      }else{
+        results = results.sort((a,b)=>(a.productClassification?.name ?? "").localeCompare((b.productClassification?.name ?? "")))
+      }
+    }
 
-    const aux = products.filter((a: ProductInfo) => {
-      return (
-        a.name.toLowerCase().includes(searchTerm) || a.productClassification?.name.toUpperCase().includes(search.toUpperCase())
-      )
-    })
+    if(sortBy.includes("price")){
+      if(sortBy.includes("Up")){
+        results = results.sort((a,b)=>Number(b.price)-Number(a.price))
+      }else{
+        results = results.sort((a,b)=>Number(a.price)-Number(b.price))
+      }
+    }
 
-    setResults(aux)
-  }, [search, products])
+    if(sortBy.includes("tax")){
+      if(sortBy.includes("Up")){
+        results = results.sort((a,b)=>a.taxRate-b.taxRate)
+      }else{
+        results = results.sort((b,a)=>a.taxRate-b.taxRate)
+      }
+    }
+  }
+
+  //Cambia el estado de sortBy
+  function sort(param: string) {
+    if (param === "name") {
+      if (sortBy === "nameDown") {
+        setSortBy("nameUp")
+      } else if (sortBy === "nameUp") {
+        setSortBy("")
+      } else {
+        setSortBy("nameDown")
+      }
+    }
+
+    if (param === "classification") {
+      if (sortBy === "classificationDown") {
+        setSortBy("classificationUp")
+      } else if (sortBy === "classificationUp") {
+        setSortBy("")
+      } else {
+        setSortBy("classificationDown")
+      }
+    }
+
+    if (param === "price") {
+      if (sortBy === "priceDown") {
+        setSortBy("priceUp")
+      } else if (sortBy === "priceUp") {
+        setSortBy("")
+      } else {
+        setSortBy("priceDown")
+      }
+    }
+
+    if (param === "tax") {
+      if (sortBy === "taxDown") {
+        setSortBy("taxUp")
+      } else if (sortBy === "taxUp") {
+        setSortBy("")
+      }else {
+        setSortBy("taxDown")
+      }
+    }
+  }
 
   return (
     <div>
@@ -105,7 +175,7 @@ function ProductsMainPage() {
         <button onClick={goToNew} className="underline cursor-pointer">Registrar nuevo</button>
         <input placeholder="Búsqueda" value={search} onChange={(e) => setSearch(e.target.value.toUpperCase())} />
         <p>{results.length} resultados</p>
-        <button onClick={()=>setIsDeleteManyOpen(true)} disabled={selectedIds.length === 0} className="disabled:opacity-60 underline cursor-pointer">Eliminar seleccionados</button>
+        <button onClick={() => setIsDeleteManyOpen(true)} disabled={selectedIds.length === 0} className="disabled:opacity-60 underline cursor-pointer">Eliminar seleccionados</button>
         <table>
           <thead>
             <tr>
@@ -113,11 +183,36 @@ function ProductsMainPage() {
                 <input type="checkbox" checked={selectedIds.length === results.length} onChange={selectAll} />
               </th>
               <th className="border-2 p-1">Id</th>
-              <th className="border-2 p-1">Nombre</th>
-              <th className="border-2 p-1">Clasificación</th>
+              <th className="border-2 p-1">
+                <button onClick={() => sort("name")} className="hover:underline cursor-pointer flex flex-row justify-center">
+                  Nombre
+                  {sortBy === "nameDown" && <ChevronDown />}
+                  {sortBy === "nameUp" && <ChevronUp />}
+                </button>
+              </th>
+              <th className="border-2 p-1">
+                <button onClick={() => sort("classification")} className="hover:underline cursor-pointer flex flex-row justify-center">
+                  Clasificación
+                  {sortBy === "classificationDown" && <ChevronDown />}
+                  {sortBy === "classificationUp" && <ChevronUp />}
+                </button>
+              </th>
               <th className="border-2 p-1">Equipo</th>
               <th className="border-2 p-1">Producto/Servicio</th>
-              <th className="border-2 p-1">Precio Unitario</th>
+              <th className="border-2 p-1">
+                <button onClick={() => sort("price")} className="hover:underline cursor-pointer flex flex-row justify-center">
+                  Precio Unitario
+                  {sortBy === "priceDown" && <ChevronDown />}
+                  {sortBy === "priceUp" && <ChevronUp />}
+                </button>
+              </th>
+              <th className="border-2 p-1">
+                <button onClick={() => sort("tax")} className="hover:underline cursor-pointer flex flex-row justify-center">
+                  Impuesto
+                  {sortBy === "taxDown" && <ChevronDown />}
+                  {sortBy === "taxUp" && <ChevronUp />}
+                </button>
+              </th>
               <th className="border-2 p-1">Conceptos</th>
               <th className="border-2 p-1">Acciones</th>
               <th className="border-2 p-1">Estado</th>
@@ -138,7 +233,10 @@ function ProductsMainPage() {
                 <td className="border-2 p-1">{p.service ? "Servicio" : "Producto"}</td>
                 <td className="border-2 p-1">${Number(p.price).toFixed(2)} USD</td>
                 <td className="border-2 p-1">
-                  {p.productCategories.map((pc:ProductCategoryInfo)=>(
+                  {p.taxRate === -1 ? "Excento de impuestos" : p.taxRate * 100 + "%"}
+                </td>
+                <td className="border-2 p-1">
+                  {p.productCategories.sort((a, b) => a.category.name.localeCompare(b.category.name)).map((pc: ProductCategoryInfo) => (
                     <p key={pc.id}>{pc.category.name}</p>
                   ))}
                 </td>
@@ -162,8 +260,8 @@ function ProductsMainPage() {
           <DeleteProductModal open={isDeleteProductOpen} setOpen={setIsDeleteProductOpen} product={selectedProduct} reload={fetchProducts} />
         </>
       }
-      {selectedIds.length>0 &&
-        <DeleteManyModal open={isDeleteManyOpen} setOpen={setIsDeleteManyOpen} selectedIds={selectedIds} reload={fetchProducts}/>
+      {selectedIds.length > 0 &&
+        <DeleteManyModal open={isDeleteManyOpen} setOpen={setIsDeleteManyOpen} selectedIds={selectedIds} reload={fetchProducts} />
       }
     </div>
   )
